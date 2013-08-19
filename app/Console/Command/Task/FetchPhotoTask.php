@@ -150,6 +150,14 @@ class FetchPhotoTask extends AppShell {
         //store content to disk
         if($this->saveContent($content, $filepath)){
             $this->out(sprintf(__d('cake_console', 'File has been saved: %s.'), $filepath));
+
+            //save to database
+            $this->saveToDB(array(
+                'id' => $item['PhotoKo']['id'],
+                'filename' => SAVED_PHOTO_PATH . $item['PhotoKo']['target_id'] . DS . $filename,
+                'target_id' => $item['PhotoKo']['target_id'],
+                'target_flg' => 1
+            ));
         }else{
             $this->out(sprintf(__d('cake_console', '<error>Error writing file: %s.</error>'), $filepath));
         }
@@ -170,6 +178,14 @@ class FetchPhotoTask extends AppShell {
         }
 
         return true;
+    }
+
+    /**
+     *
+     */
+    function saveToDB($photoObject){
+        //$this->Photo->create();
+        //return $this->Photo->save($photoObject);
     }
 
     /**
