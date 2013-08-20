@@ -59,6 +59,7 @@ class HospitalDataController extends AppController {
                         $this->HospitalDatum->create();
                         if (!empty($dataHospotal)) {
                             $this->HospitalDatum->saveMany($dataHospotal);
+                            $this->Session->setFlash(__("upload data success"));
                             return;
                         }
                         $this->Session->setFlash(__("Can not upload data"));
