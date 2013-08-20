@@ -28,4 +28,15 @@ App::uses('Shell', 'Console');
  */
 class AppShell extends Shell {
 
+    /**
+     * Override initializing of the Shell
+     *
+     * @return mixed
+     */
+    public function initialize() {
+        parent::initialize();
+
+        //set limit timeout
+        set_time_limit(MAX_PROCESS_TIMEOUT);
+    }
 }

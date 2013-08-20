@@ -32,18 +32,27 @@ App::uses('Model', 'Model');
  */
 class AppModel extends Model {
 
+
+
+	/**
+	 * Update data info before saving
+	 *
+	 */
     public function beforeSave($options = array()) {
         $key = $this->alias;
-        $update_time = date("Y-m-d H:i:s");
-        if (empty($this->id)) {
-            if (empty($this->data[$key]['insert_date']))
-                $this->data[$key]['insert_date'] = $update_time;
+		$data =& $this->data[$key];
+        $update_time = @DboSource::expression('NOW()');
+
+		if(empty($update_time)) $update_time = date('Y/m/d H:i:s');
+
+        if (empty($this->id) || empty($data['insert_date'])) {
+            $data['insert_date'] = $update_time;
         }
-        if (empty($this->data[$key]['insert_date']))
-            $this->data[$key]['insert_date'] = $update_time;
-        if (empty($this->data[$key]['update_date']))
-            $this->data[$key]['update_date'] = $update_time;
+
+        if (empty($data['update_date'])){
+            $data['update_date'] = $update_time;
+		}
+
         return true;
     }
-
 }

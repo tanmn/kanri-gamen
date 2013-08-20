@@ -12,7 +12,6 @@ class HospitalShell extends AppShell {
     public function main() {
         App::import('Model', array('HospitalDatum'));
         $this->HospitalDatum = new HospitalDatum();
-       // echo "AA";
         $this->HospitalDatum->updatePostCode();
     }
 

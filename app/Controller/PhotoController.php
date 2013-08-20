@@ -52,7 +52,7 @@ class PhotoController extends AppController {
                 'id' => $this->photo_id,
                 'filename' => $pathFileName,
                 'target_id' => intval($item[0]),
-                'target_flag' => TARGET_FLAG,
+                'target_flag' => DEFAULT_PHOTO_TARGET_FLAG,
             );
             $this->dataHospital[] = array(
                 'hospital_data_id' => intval($item[0]),

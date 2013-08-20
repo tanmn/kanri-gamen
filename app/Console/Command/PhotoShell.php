@@ -2,9 +2,15 @@
 
 App::uses('AppShell', 'Console/Command');
 
-class PhotoShell extends AppShell {
 
-    public $components = array('MultiRequest');
+/**
+ * Photo shell for fetching remote photo URLs
+ *
+ * @author      Mai Nhut Tan
+ * @since       2013/08/19
+ * @package     app.Console.Command
+ */
+class PhotoShell extends AppShell {
 
     /**
      * Contains tasks to load and instantiate
@@ -13,15 +19,6 @@ class PhotoShell extends AppShell {
      */
     public $tasks = array('FetchPhoto');
 
-    /**
-     * Override startup of the Shell
-     *
-     * @return mixed
-     */
-    public function startup() {
-        //set limit timeout
-        set_time_limit(MAX_PROCESS_TIMEOUT);
-    }
 
     /**
      * Override main()
@@ -30,6 +27,16 @@ class PhotoShell extends AppShell {
      */
     public function main() {
         $this->FetchPhoto->execute();
+    }
+
+
+    /**
+     * Displays a header for the shell
+     *
+     * @return void
+     */
+    protected function _welcome() {
+
     }
 
 }

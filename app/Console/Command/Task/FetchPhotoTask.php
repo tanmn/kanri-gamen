@@ -2,9 +2,14 @@
 
 App::uses('AppShell', 'Console/Command');
 App::uses('File', 'Utility');
-App::uses('Folder', 'Utility');
-App::uses('Hash', 'Utility');
 
+/**
+ * Task for fetching remote photo URLs
+ *
+ * @author      Mai Nhut Tan
+ * @since       2013/08/19
+ * @package     app.Console.Command.Task
+ */
 class FetchPhotoTask extends AppShell {
 
     public $uses = array('PhotoKo', 'Photo');
@@ -12,13 +17,13 @@ class FetchPhotoTask extends AppShell {
     public $errors = array();
 
     /**
-     *
+     * Run initializing
      */
-
     public function initialize() {
         parent::initialize();
 
         App::import('Vendor', 'RollingCurl/RollingCurl');
+
         $this->Sender = new RollingCurl(array($this, 'on_request_done'));
         $this->Sender->window_size = MAX_REQUEST_THREAD;
         $this->Sender->options = array(
@@ -39,7 +44,8 @@ class FetchPhotoTask extends AppShell {
     public function execute() {
         $this->out('================================================');
         $this->out('   FETCH QUEUED PHOTOS AND SAVE TO THE SERVER   ');
-        $this->out('================================================' . "\n");
+        $this->out('================================================');
+        $this->out();
 
         //prepair for errors
         $this->errors = array();
@@ -49,7 +55,8 @@ class FetchPhotoTask extends AppShell {
         $KO_photos_count = count($KO_photos);
 
         //trace photo count
-        $this->out(sprintf(__d('cake_console', '%s photo(s) found.'), $KO_photos_count) . "\n");
+        $this->out(sprintf(__d('cake_console', '%s photo(s) found.'), $KO_photos_count));
+        $this->out();
         if($KO_photos_count < 1) return;
 
         //process confirmation
@@ -88,12 +95,13 @@ class FetchPhotoTask extends AppShell {
         $this->out(sprintf("\n" . __d('cake_console', '%s request(s) initialized. Please wait until the task complete...'), count($this->Sender->requests)) . "\n");
         $this->Sender->execute();
 
-        //destructor
-        $this->out('-----------------------------------------------');
+        //destructor and output
         $total_time = microtime(true) - $start_time;
+        $this->hr();
         $this->out(__d('cake_console', 'Task has been completed.'));
         $this->out(sprintf(__d('cake_console', '%d error(s) found over %d item(s).'), count($this->errors), $KO_photos_count));
-        $this->out(sprintf(__d('cake_console', 'Total time: %fs.'), $total_time));
+        $this->out(sprintf(__d('cake_console', 'Total process time: %0.2fs.'), $total_time));
+        $this->hr();
     }
 
     /**
@@ -118,6 +126,7 @@ class FetchPhotoTask extends AppShell {
         );
     }
 
+
     /**
      *
      */
@@ -132,9 +141,7 @@ class FetchPhotoTask extends AppShell {
         if($info['http_code'] != 200){
             $this->errors[] = $item;
             $this->out(sprintf(__d('cake_console', '<error>Error downloading file: %s.</error>'), $info['url']));
-
-            //leave blank line
-            $this->out("\n");
+            $this->out();
 
             return;
         }
@@ -144,7 +151,7 @@ class FetchPhotoTask extends AppShell {
 
         //generate file path
         $fileext  = preg_replace('/^.+\./', '', $info['url']);
-        $filename = $this->getName($item) . '.' . $fileext;
+        $filename = $this->getName($item) . (empty($fileext) ? '' : '.' . $fileext);
         $filepath = SAVED_PHOTO_FULLPATH . $item['PhotoKo']['target_id'] . DS . $filename;
 
         //store content to disk
@@ -156,14 +163,14 @@ class FetchPhotoTask extends AppShell {
                 'id' => $item['PhotoKo']['id'],
                 'filename' => SAVED_PHOTO_PATH . $item['PhotoKo']['target_id'] . DS . $filename,
                 'target_id' => $item['PhotoKo']['target_id'],
-                'target_flg' => 1
+                'target_flag' => DEFAULT_PHOTO_TARGET_FLAG
             ));
         }else{
             $this->out(sprintf(__d('cake_console', '<error>Error writing file: %s.</error>'), $filepath));
         }
 
         //leave blank line
-        $this->out("\n");
+        $this->out();
     }
 
     /**
@@ -184,8 +191,8 @@ class FetchPhotoTask extends AppShell {
      *
      */
     function saveToDB($photoObject){
-        //$this->Photo->create();
-        //return $this->Photo->save($photoObject);
+        $this->Photo->create();
+        return $this->Photo->save($photoObject);
     }
 
     /**
