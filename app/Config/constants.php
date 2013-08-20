@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Initial constants
  *
@@ -6,7 +7,6 @@
  * @author      Mai Nhut Tan
  * @since       2013-08-16
  */
-
 /**
  * Source path URL to fetch photos, no trailing dash
  */
@@ -24,6 +24,10 @@ define('SAVED_PHOTO_DIR', WWW_ROOT . 'images' . DS);
  */
 define('SAVED_PHOTO_PATH', 'hospital' . DS);
 
+/**
+ * path upload CSV
+ */
+define('PATH_FILE_UPLOAD_CSV',TMP);
 
 /**
  * Full path of SAVED_PHOTO_PATH
@@ -31,7 +35,15 @@ define('SAVED_PHOTO_PATH', 'hospital' . DS);
  */
 define('SAVED_PHOTO_FULLPATH', SAVED_PHOTO_DIR . SAVED_PHOTO_PATH);
 
+/**
+ * path save name file
+ */
+define('PATH_SAVE_FILENAME', 'hospital' . DS . 'images' . DS);
 
+/**
+ * FILE TYPE UPLOAD CSV
+ */
+define('FILE_TYPE_UPLOAD', "csv");
 /**
  * Max thread count allowed when fetching URL
  */

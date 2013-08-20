@@ -44,7 +44,7 @@ class PhotoController extends AppController {
         $fileext = preg_replace('/^.+\./', '', $info['url']);
         $filename = $this->getName($item) . '.' . $fileext;
         $pathFileName = PATH_SAVE_FILENAME . $item[0] . DS . $filename;
-        $filepath = SAVED_PHOTO_FULLPATH . $pathFileName;
+        $filepath = SAVED_PHOTO_DIR . $pathFileName;
         //store content to disk
         if ($this->saveContent($content, $filepath)) {
             $this->photo_id++;
@@ -83,7 +83,7 @@ class PhotoController extends AppController {
                     $photo = $this->Photo->find("first", array(
                         'fields' => "Photo.id",
                         'order' => array("Photo.id DESC")
-                            ));
+                    ));
                     $this->photo_id = $photo['Photo']['id'];
                     $result = $this->actionUpload($filePath);
                     if ($result) {
@@ -119,6 +119,17 @@ class PhotoController extends AppController {
         }
     }
 
+    function CheckExistKeyInArray($result, $value, $count) {
+        for ($i = 0; $i < $count; $i++)
+            if (!empty($result[$i][0])) {
+                if ($result[$i][0] == $value) {
+                    CakeLog::write('UPLOAD_CSV( ' . date("Y-m-d") . " )", __("Can not save data With hospital_id: " . $value));
+                    return true;
+                }
+            }
+        return false;
+    }
+
     /**
      * action uload file
      *
@@ -133,11 +144,13 @@ class PhotoController extends AppController {
             $common = $this->Components->load('Common');
             $result = $common->convertCsvFileDefault($filePath);
             unset($result[0]);
+            $i = 0;
             foreach ($result as $value) {
-                if (!empty($value[0])) {
+                if (!empty($value[0]) && !$this->CheckExistKeyInArray($result, $value[0], $i)) {
                     $request = new RollingCurlRequest($value[1]);
                     $request->user_var = $value;
                     $this->Sender->add($request);
+                    $i++;
                 }
             }
             $this->Sender->execute();
@@ -171,3 +184,4 @@ class PhotoController extends AppController {
     }
 
 }
+

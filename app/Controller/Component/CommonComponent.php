@@ -3,8 +3,8 @@
 /**
  * Leverages Vietnam Co., Ltd
  *
- * @author             Truong Minh Hai
- * @date created       12/17/2012
+ * @author             Nguyen Ngoc Thai
+ * @date created       2013/08/20
  * @modified by
  * @date modified
  *
@@ -21,17 +21,15 @@ class CommonComponent extends Component {
      * @since 2013-08-20
      */
     function convertCsvFileDefault($filename, $convert_encoding = true) {
+        // open the file
+        $handle = fopen($filename, "r");
         $data = array();
-        $dataCsv = file($filename);
-        $n = count($dataCsv);
-        for ($i = 0; $i < $n; ++$i) {
-            if ($convert_encoding) {
-                $tmp = mb_convert_encoding($dataCsv[$i], "UTF-8", "SJIS-win");
-                $data[] = explode(',', $tmp);
-            } else {
-                $data[] = explode(',', $dataCsv[$i]);
-            }
+        $header = fgetcsv($handle);
+        $data[] = $header;
+        while (($row = fgetcsv($handle)) !== FALSE) {
+            $data[] = $row;
         }
+        fclose($handle);
         App::uses('File', 'Utility');
         $file = new File($filename);
         $file->delete();
