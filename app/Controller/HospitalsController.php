@@ -11,4 +11,6 @@ App::uses('AppController', 'Controller');
 class HospitalsController extends AppController {
     public $scaffold;
     public $uses = array('HospitalDatum');
+    
+    
 }

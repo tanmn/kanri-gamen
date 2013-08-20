@@ -1,5 +1,7 @@
 <?php
+
 App::uses('AppModel', 'Model');
+
 /**
  * HospitalDatum Model
  *
@@ -141,4 +143,120 @@ class HospitalDatum extends AppModel {
         'HospitalDatum.feature_2',
         'HospitalDatum.feature_t_2'
     );
+
+    /**
+     * Validation rules
+     *
+     * @var array
+     */
+    public function createValidate() {
+        $validate1 = array(
+            'file' => array(
+                'notempty' => array(
+                    'rule' => array('checkEmpty'),
+                    'message' => 'file not empty'
+                ),
+                'extension' => array(
+                    'rule' => array('extension', array(FILE_TYPE_UPLOAD)),
+                    'message' => 'Only  files : ' . FILE_TYPE_UPLOAD,
+                ),
+                'size' => array(
+                    'rule' => array("checkSize"),
+                    'message' => 'Image must be less than ' . MAX_FILE_UPLOAD_SCV_PHOTO / 1024 . " MB"
+                ),
+                ));
+        $this->validate = $validate1;
+        return $this->validates();
+    }
+
+    /**
+     * check empty file
+     *
+     * @method checkEmpty
+     * @param 
+     * @return null
+     * @author Ngoc Thai
+     * @since 2013-08-20
+     */
+    function checkEmpty() {
+
+        if ($this->data['HospitalDatum']['file']['name'])
+            return true;
+        return false;
+    }
+
+    /**
+     * check size file upload
+     *
+     * @method checkSize
+     * @param 
+     * @return null
+     * @author Ngoc Thai
+     * @since 2013-08-20
+     */
+    function checkSize() {
+        if (!empty($this->data['HospitalDatum']['file']['size']) && $this->data['HospitalDatum']['file']['size'] / 1024 > MAX_FILE_UPLOAD_SCV_PHOTO)
+            return false;
+        return true;
+    }
+
+    /**
+     * update postCode
+     *
+     * @method updatePostCode
+     * @param 
+     * @return null
+     * @author Ngoc Thai
+     * @since 2013-08-20
+     */
+    function updatePostCode() {
+        APP::import("Model", array("RecruitingDatum", "MsPrefecture", "MsStation", "MsWard"));
+        $this->RecruitingDatum = new RecruitingDatum();
+        $this->MsPrefecture = new MsPrefecture();
+        $this->MsStation = new MsStation();
+        $this->MsWard = new MsWard();
+        $r_count = $this->RecruitingDatum->find('count');
+        $h_count = $this->find('count');
+        $norh_count = $this->find('count', array(
+            'conditions' => array("HospitalDatum.norh_flag" => TARGET_FLAG),
+                ));
+        $this->MsWard->begin();
+        $this->MsStation->begin();
+        $this->MsPrefecture->begin();
+        if (!$this->MsWard->updateAll(
+                        array(
+                            'MsWard.h_count' => $h_count,
+                            'MsWard.r_count' => $r_count,
+                            'MsWard.norh_count' => $norh_count,
+                ))) {
+            $this->MsWard->rollback();
+            echo __('Result : ', 'Update Error');
+            return;
+        }
+
+        if (!$this->MsStation->updateAll(
+                        array(
+                            'MsStation.h_count' => $h_count,
+                            'MsStation.r_count' => $r_count,
+                            'MsStation.norh_count' => $norh_count,
+                        )
+        )) {
+            $this->MsWard->rollback();
+            echo __('Result : ', 'Update Error');
+            return;
+        }
+        if (!$this->MsPrefecture->updateAll(
+                        array(
+                            'MsPrefecture.h_count' => $h_count,
+                            'MsPrefecture.r_count' => $r_count,
+                            'MsPrefecture.norh_count' => $norh_count,
+                ))) {
+            $this->MsWard->rollback();
+            echo __('Result : ', 'Update Error');
+            return;
+        }
+        $this->MsWard->commit();
+        echo __('Result : ', 'Update Success');
+    }
+
 }

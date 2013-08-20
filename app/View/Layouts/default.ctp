@@ -30,7 +30,7 @@
         echo $this -> Html -> meta('icon');
         echo $this -> fetch('meta');
 
-        echo $this -> Html -> css(array('bootstrap.min', 'common'));
+        echo $this -> Html -> css(array('bootstrap.min'));
         echo $this -> fetch('css');
         ?>
 
@@ -40,47 +40,20 @@
     </head>
     <body>
     	<div id="container">
-    		<div id="header" class="container">
-    		    <div class="wrapper row-fluid">
-        			<h1>this is header</h1>
-    			</div>
+    		<div id="header">
+    			<h1>this is header</h1>
     		</div>
+    		<div id="content">
+    			<?php echo $this -> Session -> flash(); ?>
 
-    		<div id="content" class="container">
-    		    <div class="wrapper row-fluid">
-    		        <noscript>
-                        <div class="label label-important block clear" style="padding: 10px;">
-                            <marquee>
-                            <i class="icon-exclamation-sign"></i>
-                            <?php echo __('Please enable Javascript.') ?>
-                            </marquee>
-                        </div>
-
-                        <div class="row"></div>
-
-                        <style type="text/css">
-                            noscript + div{
-                                display: none;
-                            }
-                        </style>
-                    </noscript>
-
-                    <?php echo $this -> Session -> flash(); ?>
-
-                    <?php echo $this -> fetch('content'); ?>
-                </div>
+    			<?php echo $this -> fetch('content'); ?>
     		</div>
-
-    		<div id="footer" class="container">
-    		    <div class="wrapper row-fluid">
-    		        this is footer
-		        </div>
+    		<div id="footer">
+    		    this is footer
     		</div>
     	</div>
 
-        <div id="debugger">
-            <?php echo $this -> element('sql_dump'); ?>
-        </div>
+    	<?php echo $this -> element('sql_dump'); ?>
 
     	<?php
         echo $this -> Html -> script(array('jquery', 'bootstrap.min'));

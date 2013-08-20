@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Application model for Cake.
  *
@@ -19,7 +20,6 @@
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 App::uses('Model', 'Model');
 
 /**
@@ -31,4 +31,19 @@ App::uses('Model', 'Model');
  * @package       app.Model
  */
 class AppModel extends Model {
+
+    public function beforeSave($options = array()) {
+        $key = $this->alias;
+        $update_time = date("Y-m-d H:i:s");
+        if (empty($this->id)) {
+            if (empty($this->data[$key]['insert_date']))
+                $this->data[$key]['insert_date'] = $update_time;
+        }
+        if (empty($this->data[$key]['insert_date']))
+            $this->data[$key]['insert_date'] = $update_time;
+        if (empty($this->data[$key]['update_date']))
+            $this->data[$key]['update_date'] = $update_time;
+        return true;
+    }
+
 }
