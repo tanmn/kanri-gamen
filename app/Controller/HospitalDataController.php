@@ -21,7 +21,6 @@ class HospitalDataController extends AppController {
      * @since 2013-08-20
      */
     function upload() {
-        $this->HospitalDatum->updatePostCode();
         if ($this->request->is("post")) {
             APP::import("Model", array("Photo"));
             $this->Photo = new Photo();
