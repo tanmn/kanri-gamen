@@ -145,62 +145,6 @@ class HospitalDatum extends AppModel {
     );
 
     /**
-     * Validation rules
-     *
-     * @var array
-     */
-    public function createValidate() {
-        $validate1 = array(
-            'file' => array(
-                'notempty' => array(
-                    'rule' => array('checkEmpty'),
-                    'message' => 'file not empty'
-                ),
-                'extension' => array(
-                    'rule' => array('extension', array(FILE_TYPE_UPLOAD)),
-                    'message' => 'Only  files : ' . FILE_TYPE_UPLOAD,
-                ),
-                'size' => array(
-                    'rule' => array("checkSize"),
-                    'message' => 'Image must be less than ' . MAX_FILE_UPLOAD_SCV_PHOTO / 1024 . " MB"
-                ),
-                ));
-        $this->validate = $validate1;
-        return $this->validates();
-    }
-
-    /**
-     * check empty file
-     *
-     * @method checkEmpty
-     * @param 
-     * @return null
-     * @author Ngoc Thai
-     * @since 2013-08-20
-     */
-    function checkEmpty() {
-
-        if ($this->data['HospitalDatum']['file']['name'])
-            return true;
-        return false;
-    }
-
-    /**
-     * check size file upload
-     *
-     * @method checkSize
-     * @param 
-     * @return null
-     * @author Ngoc Thai
-     * @since 2013-08-20
-     */
-    function checkSize() {
-        if (!empty($this->data['HospitalDatum']['file']['size']) && $this->data['HospitalDatum']['file']['size'] / 1024 > MAX_FILE_UPLOAD_SCV_PHOTO)
-            return false;
-        return true;
-    }
-
-    /**
      * update postCode
      *
      * @method updatePostCode
@@ -230,7 +174,7 @@ class HospitalDatum extends AppModel {
                             'MsWard.norh_count' => $norh_count,
                 ))) {
             $this->MsWard->rollback();
-            echo __('Result : ', 'Update Error');
+            echo __('Result : Update Error');
             return;
         }
 
@@ -242,7 +186,7 @@ class HospitalDatum extends AppModel {
                         )
         )) {
             $this->MsWard->rollback();
-            echo __('Result : ', 'Update Error');
+            echo __('Result : Update Error');
             return;
         }
         if (!$this->MsPrefecture->updateAll(
@@ -252,11 +196,11 @@ class HospitalDatum extends AppModel {
                             'MsPrefecture.norh_count' => $norh_count,
                 ))) {
             $this->MsWard->rollback();
-            echo __('Result : ', 'Update Error');
+            echo __('Result : Update Error');
             return;
         }
         $this->MsWard->commit();
-        echo __('Result : ', 'Update Success');
+        echo __('Result : Update Success');
     }
 
 }

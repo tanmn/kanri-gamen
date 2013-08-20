@@ -48,8 +48,6 @@ define('TARGET_FLAG', 1);
 define('MAX_PROCESS_TIMEOUT', 0);
 
 
-define('MAX_FILE_UPLOAD_SCV_PHOTO', 2048);
-
 define('FILE_TYPE_UPLOAD', "csv");
 
 /**

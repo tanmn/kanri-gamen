@@ -23,17 +23,17 @@ class HospitalDataController extends AppController {
     function upload() {
         $this->HospitalDatum->updatePostCode();
         if ($this->request->is("post")) {
-            $valueHospital = $this->HospitalDatum->find("list", array(
-                'fields' => array('HospitalDatum.id', 'HospitalDatum.id')
-                    ));
-            APP::import("Model", array("HospitalDatum"));
-            $this->HospitalDatum = new HospitalDatum();
+            APP::import("Model", array("Photo"));
+            $this->Photo = new Photo();
             $data = $this->request->data;
-            $this->HospitalDatum->set($data['HospitalDatum']);
-            if ($this->HospitalDatum->createValidate()) {
-                $filePath = PATH_FILE_UPLOAD_CSV . $data['HospitalDatum']["file"]["name"];
+            $this->Photo->set($data['Photo']);
+            if ($this->Photo->createValidate()) {
+                $valueHospital = $this->HospitalDatum->find("list", array(
+                    'fields' => array('HospitalDatum.id', 'HospitalDatum.id')
+                        ));
+                $filePath = PATH_FILE_UPLOAD_CSV . $data['Photo']["file"]["name"];
                 //echo SAVED_FILE_UPLOAD_CSV_PHOTO;
-                if (move_uploaded_file($data['HospitalDatum']["file"]["tmp_name"], $filePath)) {
+                if (move_uploaded_file($data['Photo']["file"]["tmp_name"], $filePath)) {
                     $common = $this->Components->load('Common');
                     $dataCSV = $common->convertCsvFileDefault($filePath);
                     unset($dataCSV[0]);
@@ -62,13 +62,13 @@ class HospitalDataController extends AppController {
                             $this->HospitalDatum->saveMany($dataHospotal);
                             return;
                         }
-                        $this->Session->setFlash("Can not upload data");
+                        $this->Session->setFlash(__("Can not upload data"));
                     }
                 } else {
-                    $this->Session->setFlash("Can not upload data");
+                    $this->Session->setFlash(__("Can not upload data"));
                 }
             } else {
-                $this->Session->setFlash("Can not upload data");
+                $this->Session->setFlash(__("Can not upload data"));
             }
         }
     }
