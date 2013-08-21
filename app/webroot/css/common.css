@@ -1,0 +1,45 @@
+.brand sup{
+    font-size: 50%;
+    font-weight: normal;
+    top: -1.1em;
+}
+
+.close{
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 21px;
+}
+
+/*========== Debugger ==========*/
+#debugger{
+    font-family: Consolas, 'Courier';
+    padding: 10px;
+    background: #222;
+    color: #bbb;
+    font-size: 90%;
+    overflow: auto;
+}
+
+#debugger table{
+    width: 100%;
+}
+
+#debugger table caption{
+    color: #f90;
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+#debugger table thead{
+    color: #eee;
+}
+
+#debugger table th{
+    background: #555;
+}
+
+#debugger table td,
+#debugger table th{
+    border: 1px solid #333;
+    border-collapse: collapse;
+}

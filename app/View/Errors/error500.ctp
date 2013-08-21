@@ -16,13 +16,27 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
-<h2><?php echo $name; ?></h2>
-<p class="error">
-	<strong><?php echo __d('cake', 'Error'); ?>: </strong>
-	<?php echo __d('cake', 'An Internal Error Has Occurred.'); ?>
-</p>
-<?php
-if (Configure::read('debug') > 0 ):
-	echo $this->element('exception_stack_trace');
-endif;
-?>
+<div class="span12">
+
+    <div class="error-container">
+        <h2><?php echo __d('cake', 'Error'); ?></h2>
+
+        <div class="error-details">
+            <?php echo __d('cake', 'An Internal Error Has Occurred.'); ?>
+        </div> <!-- /error-details -->
+
+        <div class="error-actions">
+            <a href="" onclick="window.location = BASE; return false;" class="btn btn-large">
+                Back to Home
+            </a>
+        </div> <!-- /error-actions -->
+
+        <?php
+        if (Configure::read('debug') > 0 ):
+            echo $this->element('exception_stack_trace');
+        endif;
+        ?>
+
+    </div> <!-- /error-container -->
+
+</div> <!-- /span12 -->
