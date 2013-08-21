@@ -33,7 +33,7 @@ class HospitalDataController extends AppController {
                         'HospitalDatum.id'
                     )
                 ));
-                $filePath = PATH_FILE_UPLOAD_CSV . $data['Photo']["file"]["name"];
+                $filePath = CSV_UPLOAD_PATH . $data['Photo']["file"]["name"];
                 if (move_uploaded_file($data['Photo']["file"]["tmp_name"], $filePath)) {
                     $common = $this->Components->load('Common');
                     $dataCSV = $common->convertCsvFileDefault($filePath);

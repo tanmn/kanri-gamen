@@ -1,12 +1,12 @@
 <?php
 
-/* * *********************************************
-  /**** Class_name     : ReminderShell
-  /**** Extends        : AppShell
-  /**** Author         : Thai Thanh Duoc
-  /**** Created_date   : 2013-05-28
- * ********************************************* */
-
+/**
+ * 
+ *
+ * @author      Nguyen Ngoc Thai
+ * @since       2013/08/20
+ * @package     app.Console.Command
+ */
 class HospitalShell extends AppShell {
 
     /**
@@ -19,17 +19,20 @@ class HospitalShell extends AppShell {
      * @since 2013-08-20
      */
     public function main() {
-        echo __(' Please Wait ........ ');
+        $this->out(__d('cake_console', ' Please Wait ........ '));
+		
         APP::import("Model", array(
             "RecruitingDatum",
             "MsPrefecture",
             "MsStation",
             "MsWard"
         ));
+		
         $this->RecruitingDatum = new RecruitingDatum();
         $this->MsPrefecture = new MsPrefecture();
         $this->MsStation = new MsStation();
         $this->MsWard = new MsWard();
+		
         $r_count = $this->RecruitingDatum->find('count');
         $h_count = $this->find('count');
         $norh_count = $this->find('count', array(
@@ -37,38 +40,43 @@ class HospitalShell extends AppShell {
                 "HospitalDatum.norh_flag" => DEFAULT_PHOTO_TARGET_FLAG
             )
         ));
+		
         $this->MsWard->begin();
         $this->MsStation->begin();
         $this->MsPrefecture->begin();
+		
         if (!$this->MsWard->updateAll(array(
-                    'MsWard.h_count' => $h_count,
-                    'MsWard.r_count' => $r_count,
-                    'MsWard.norh_count' => $norh_count
-                ))) {
+			'MsWard.h_count' => $h_count,
+			'MsWard.r_count' => $r_count,
+			'MsWard.norh_count' => $norh_count
+		))) {
             $this->MsWard->rollback();
-            echo __('Result : Update Error');
+            $this->out(__d('cake_console', 'Result : Update Error'));
             return;
         }
+		
         if (!$this->MsStation->updateAll(array(
-                    'MsStation.h_count' => $h_count,
-                    'MsStation.r_count' => $r_count,
-                    'MsStation.norh_count' => $norh_count
-                ))) {
+			'MsStation.h_count' => $h_count,
+			'MsStation.r_count' => $r_count,
+			'MsStation.norh_count' => $norh_count
+		))) {
             $this->MsWard->rollback();
-            echo __('Result : Update Error');
+            $this->out(__d('cake_console', 'Result : Update Error'));
             return;
         }
+		
         if (!$this->MsPrefecture->updateAll(array(
-                    'MsPrefecture.h_count' => $h_count,
-                    'MsPrefecture.r_count' => $r_count,
-                    'MsPrefecture.norh_count' => $norh_count
-                ))) {
+			'MsPrefecture.h_count' => $h_count,
+			'MsPrefecture.r_count' => $r_count,
+			'MsPrefecture.norh_count' => $norh_count
+		))) {
             $this->MsWard->rollback();
-            echo __('Result : Update Error');
+            $this->out(__d('cake_console', 'Result : Update Error'));
             return;
         }
+		
         $this->MsWard->commit();
-        echo __('Result : Update Success');
+        $this->out(__d('cake_console', 'Result : Update Success'));
     }
 
 }

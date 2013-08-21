@@ -77,7 +77,7 @@ class PhotoController extends AppController {
             $data = $this->request->data;
             $this->Photo->set($data['Photo']);
             if ($this->Photo->createValidate()) {
-                $filePath = PATH_FILE_UPLOAD_CSV . $data['Photo']["file"]["name"];
+                $filePath = CSV_UPLOAD_PATH . $data['Photo']["file"]["name"];
                 //echo SAVED_FILE_UPLOAD_CSV_PHOTO;
                 if (move_uploaded_file($data['Photo']["file"]["tmp_name"], $filePath)) {
                     $photo = $this->Photo->find("first", array(

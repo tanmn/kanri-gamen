@@ -7,6 +7,8 @@
  * @author      Mai Nhut Tan
  * @since       2013-08-16
  */
+
+
 /**
  * Source path URL to fetch photos, no trailing dash
  */
@@ -18,16 +20,13 @@ define('PHOTO_SOURCE_URL', 'http://kango-oshigoto.jp/img_la');
  */
 define('SAVED_PHOTO_DIR', WWW_ROOT . 'images' . DS);
 
+
 /**
- * Path to store photo that fetched, trailing by DS
+ * Path to store photo that will be fetched, followed by DS
  * This path will be saved to DB with filename
  */
 define('SAVED_PHOTO_PATH', 'hospital' . DS);
 
-/**
- * path upload CSV
- */
-define('PATH_FILE_UPLOAD_CSV',TMP);
 
 /**
  * Full path of SAVED_PHOTO_PATH
@@ -35,15 +34,7 @@ define('PATH_FILE_UPLOAD_CSV',TMP);
  */
 define('SAVED_PHOTO_FULLPATH', SAVED_PHOTO_DIR . SAVED_PHOTO_PATH);
 
-/**
- * path save name file
- */
-define('PATH_SAVE_FILENAME', 'hospital' . DS . 'images' . DS);
 
-/**
- * FILE TYPE UPLOAD CSV
- */
-define('FILE_TYPE_UPLOAD', "csv");
 /**
  * Max thread count allowed when fetching URL
  */
@@ -78,3 +69,15 @@ define('TIME_FORMAT', 'H:i:s');
  * Default date time format
  */
 define('DATETIME_FORMAT', 'Y/m/d H:i:s');
+
+
+/**
+ * path upload CSV
+ */
+define('CSV_UPLOAD_PATH', TMP);
+
+
+/**
+ * FILE TYPE UPLOAD CSV
+ */
+define('FILE_TYPE_UPLOAD', "csv");
