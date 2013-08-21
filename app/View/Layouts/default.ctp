@@ -43,7 +43,7 @@
             ?>
         <![endif]-->
 
-        echo $this -> fetch('css');
+        <?php echo $this -> fetch('css'); ?>
     </head>
 
     <body>
