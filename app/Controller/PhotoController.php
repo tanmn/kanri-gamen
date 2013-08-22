@@ -33,7 +33,7 @@ class PhotoController extends AppController {
     }
 
     /**
-     * multithread call action request 
+     * multithread call action request
      */
     function on_request_done($content, $info, $request) {
         $item = $request->user_var;
@@ -43,7 +43,7 @@ class PhotoController extends AppController {
         }
         $fileext = preg_replace('/^.+\./', '', $info['url']);
         $filename = $this->getName($item) . '.' . $fileext;
-        $pathFileName = PATH_SAVE_FILENAME . $item[0] . DS . $filename;
+        $pathFileName = SAVED_PHOTO_PATH . $item[0] . DS . $filename;
         $filepath = SAVED_PHOTO_DIR . $pathFileName;
         //store content to disk
         if ($this->saveContent($content, $filepath)) {
@@ -64,7 +64,7 @@ class PhotoController extends AppController {
     }
 
     /**
-     * upload file csv and insert data 
+     * upload file csv and insert data
      *
      * @method upload
      * @param null
@@ -160,7 +160,7 @@ class PhotoController extends AppController {
     }
 
     /**
-     * save File 
+     * save File
      *
      * @method saveContent
      * @param path file uploads

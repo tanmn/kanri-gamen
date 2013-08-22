@@ -33,4 +33,21 @@ App::uses('Controller', 'Controller');
  */
 class AppController extends Controller {
 
+    /**
+     * Trigger error pages
+     *
+     * @method beforeRender
+     * @param void
+     * @return void
+     * @author Mai Nhut Tan
+     * @since 2013.08.21
+     */
+
+    function beforeRender() {
+        parent::beforeRender();
+
+        if ($this->name == 'CakeError') {
+            $this->layout = 'default';
+        }
+    }
 }
