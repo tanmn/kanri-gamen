@@ -1,8 +1,8 @@
-<div class="hospitalData index">
-	<h2><?php echo __('Hospital Data'); ?></h2>
+<div class="recruitingData index">
+	<h2><?php echo __('Recruiting Data'); ?></h2>
     <?php 
         for($i = 0; $i < count($defaultFields); $i++) {
-            $defaultFields[$i] = str_replace('HospitalDatum.', '', $defaultFields[$i]);
+            $defaultFields[$i] = str_replace('RecruitingDatum.', '', $defaultFields[$i]);
         }
     ?>
 	<table cellpadding="0" cellspacing="0">
@@ -13,15 +13,15 @@
         <th class="actions"><?php echo __('Actions'); ?></th>
 	</tr>
 	<?php
-	foreach ($hospitalData as $hospitalDatum): ?>
+	foreach ($recruitingData as $recruitingDatum): ?>
 	<tr>
         <?php for($i = 0; $i < count($defaultFields); $i++):?>
-            <td><?php echo h($hospitalDatum['HospitalDatum'][$defaultFields[$i]]); ?>&nbsp;</td>
+            <td><?php echo h($recruitingDatum['RecruitingDatum'][$defaultFields[$i]]); ?>&nbsp;</td>
         <?php endfor;?>
 		<td class="actions">
-			<?php echo $this->Html->link(__('View'), array('action' => 'view', $hospitalDatum['HospitalDatum']['id'])); ?>
-			<?php echo $this->Html->link(__('Edit'), array('action' => 'edit', $hospitalDatum['HospitalDatum']['id'])); ?>
-			<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $hospitalDatum['HospitalDatum']['id']), null, __('Are you sure you want to delete # %s?', $hospitalDatum['HospitalDatum']['id'])); ?>
+			<?php echo $this->Html->link(__('View'), array('action' => 'view', $recruitingDatum['RecruitingDatum']['id'])); ?>
+			<?php echo $this->Html->link(__('Edit'), array('action' => 'edit', $recruitingDatum['RecruitingDatum']['id'])); ?>
+			<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $recruitingDatum['RecruitingDatum']['id']), null, __('Are you sure you want to delete # %s?', $recruitingDatum['RecruitingDatum']['id'])); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>
@@ -41,3 +41,4 @@
 	?>
 	</div>
 </div>
+
