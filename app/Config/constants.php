@@ -16,6 +16,18 @@ define('PHOTO_SOURCE_URL', 'http://kango-oshigoto.jp/img_la');
 
 
 /**
+ *
+ */
+define('DEFAULT_IMAGE', 'blank.gif');
+
+
+/**
+ * Path to cache thumbails
+ */
+define('SAVED_THUMB_PATH', TMP . 'cache' . DS . 'thumbnails' . DS);
+
+
+/**
  * Path to images folder, where files will be stored
  */
 define('SAVED_PHOTO_DIR', WWW_ROOT . 'images' . DS);
@@ -51,6 +63,17 @@ define('MAX_PROCESS_TIMEOUT', 0);
  * Default photo's target flag
  */
 define('DEFAULT_PHOTO_TARGET_FLAG', 1);
+
+
+/**
+ * Photos per page
+ */
+define('PHOTO_LIMIT', 200);
+
+/**
+ * Enable Photo management on web
+ */
+define('ENABLE_PHOTO_MANAGEMENT', true);
 
 
 /**
