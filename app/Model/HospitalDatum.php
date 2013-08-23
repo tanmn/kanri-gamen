@@ -35,7 +35,6 @@ class HospitalDatum extends AppModel {
         'HospitalDatum.update_date',
         'HospitalDatum.geo',
         'HospitalDatum.proagent_id',
-        'HospitalDatum.',
         'HospitalDatum.history_business_id',
         'HospitalDatum.history_status',
         'HospitalDatum.history_date',
@@ -142,6 +141,38 @@ class HospitalDatum extends AppModel {
         'HospitalDatum.feature_t_1',
         'HospitalDatum.feature_2',
         'HospitalDatum.feature_t_2'
+    );
+    
+    /**
+     * Validation rules
+     *
+     * @var array
+     */
+    public $validate = array(
+        'hospital_name' => array(
+            'notempty' => array(
+                'rule' => array('notempty'),
+                'message' => 'This field could not be empty',
+            ),
+        ),
+        'norh_flag' => array(
+            'notempty' => array(
+                'rule' => array('notempty'),
+                'message' => 'This field could not be empty',
+            ),
+        ),
+        'updated_by_ko_flag' => array(
+            'notempty' => array(
+                'rule' => array('notempty'),
+                'message' => 'This field could not be empty',
+            ),
+        ),
+        'rank_of_approaching_hospital' => array(
+            'notempty' => array(
+                'rule' => array('notempty'),
+                'message' => 'This field could not be empty',
+            ),
+        ),
     );
 
 }
