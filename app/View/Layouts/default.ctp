@@ -29,10 +29,12 @@
         <script type="text/javascript">BASE = '<?php echo Router::url('/', true) ?>';</script>
 
         <?php
-        echo $this -> Html -> meta('icon');
+        echo $this -> Html -> meta('icon', Router::url('/favicon.png'), array('type'=>'image/png'));
         echo $this -> fetch('meta');
 
-        echo $this -> Html -> css(array('bootstrap.min', 'admin', 'admin-responsive', 'font-awesome.min', 'common'));
+        echo $this -> Html -> css(array('bootstrap.min', 'admin', 'admin-responsive', 'font-awesome.min'));
+        echo $this -> Html -> css(array('jquery.fancybox', 'jquery.fancybox-buttons', 'jquery.fancybox-thumbs'));
+        echo $this -> Html -> css(array('common'));
 
         ?>
 
@@ -222,7 +224,7 @@
 
         <div id="debugger">
             <?php echo $this -> element('sql_dump'); ?>
-        </div>
+        </div><!-- /debugger -->
 
 
 
@@ -230,6 +232,9 @@
 
     	<?php
         echo $this -> Html -> script(array('libs/jquery', 'libs/bootstrap.min'));
+        echo $this -> Html -> script(array('plugins/fancybox/jquery.fancybox.pack', 'plugins/fancybox/jquery.fancybox-thumbs', 'plugins/fancybox/jquery.fancybox-buttons', 'plugins/fancybox/jquery.fancybox-media'));
+        echo $this -> Html -> script(array('plugins/lazyload'));
+        echo $this -> Html -> script(array('admin'));
         echo $this -> fetch('script');
         ?>
     </body>
