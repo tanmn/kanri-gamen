@@ -93,15 +93,6 @@ class PhotosController extends AppController {
      * @since 2013/08/23
      */
     public function import(){
-        $this->saveHospitalPhotoToDB(array(
-            'hospital_data_id' => 1,
-            'photo_id'=>6190,
-            'disp_no' => 1,
-            'comment_of_photo' => ''
-        ));
-
-        die();
-
         if($this->request->is('post') || $this->request->is('push')){
             if(isset($this->request->data['file']['tmp_name']) && file_exists($this->request->data['file']['tmp_name'])){
                 $temp_file = $this->request->data['file']['tmp_name'];
@@ -191,7 +182,7 @@ class PhotosController extends AppController {
 
             //save Hospital Photo queues
             foreach($this->queues as $item){
-                $this->saveHospitalPhotoToDB($item);
+                //$this->saveHospitalPhotoToDB($item);
             }
 
             //cleanup
