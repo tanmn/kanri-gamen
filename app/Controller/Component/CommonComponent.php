@@ -36,4 +36,27 @@ class CommonComponent extends Component {
         return $data;
     }
 
+
+    /**
+     * Read CSV to Array
+     *
+     * @method csv2array
+     * @param  string $filepath
+     * @return array
+     * @author Mai Nhut Tan
+     * @since 2013-08-23
+     */
+    function csv2array($filepath) {
+        $output = array();
+
+        if (($handle = fopen($filepath, 'r')) !== FALSE) {
+            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                $output[] = $data;
+            }
+            fclose($handle);
+        }
+
+        return $output;
+    }
+
 }

@@ -101,6 +101,12 @@ define('CSV_UPLOAD_PATH', TMP);
 
 
 /**
- * FILE TYPE UPLOAD CSV
+ * CSV extension
  */
-define('FILE_TYPE_UPLOAD', "csv");
+define('UPLOAD_FILETYPE_CSV', "csv");
+
+
+/**
+ * Name of session that stores temporary uploaded csv
+ */
+define('CSV_BUFFER_SESSION_NAME', 'UploadedData');

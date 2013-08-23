@@ -1,0 +1,1 @@
+<div class="alert alert-success"><i class="icon-ok-sign"></i> <?php echo $message; ?></div>

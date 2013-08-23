@@ -69,87 +69,7 @@
 
 
 
-        <div class="subnavbar">
-            <div class="subnavbar-inner">
-                <div class="container">
-
-                    <a class="btn-subnavbar collapsed" data-toggle="collapse" data-target=".subnav-collapse">
-                        <i class="icon-reorder"></i>
-                    </a>
-
-                    <div class="subnav-collapse collapse">
-                        <ul class="mainnav">
-
-                            <li class="active">
-                                <a href="">
-                                    <i class="icon-home"></i>
-                                    <span>Home</span>
-                                </a>
-                            </li>
-
-                            <li class="">
-                                <a href="">
-                                    <i class="icon-building"></i>
-                                    <span>Hospital</span>
-                                </a>
-                            </li>
-
-                            <li class="">
-                                <a href="">
-                                    <i class="icon-bullhorn"></i>
-                                    <span>Recuitment</span>
-                                </a>
-                            </li>
-
-                            <li class="dropdown">
-                                <a href="" class="dropdown-toggle" data-toggle="dropdown">
-                                    <i class="icon-picture"></i>
-                                    <span>Photo</span>
-                                    <b class="caret"></b>
-                                </a>
-
-                                <ul class="dropdown-menu">
-                                    <li><a href=""><i class="icon-picture"></i> Photo management</a></li>
-                                    <li><a href=""><i class="icon-file"></i> Import from CSV</a></li>
-                                </ul>
-                            </li>
-
-                            <li class="dropdown">
-                                <a href="" class="dropdown-toggle" data-toggle="dropdown">
-                                    <i class="icon-list"></i>
-                                    <span>Others</span>
-                                    <b class="caret"></b>
-                                </a>
-
-                                <ul class="dropdown-menu">
-                                    <li><a href="" >asp</a></li>
-                                    <li><a href="" >ms_af_asp_id</a></li>
-                                    <li><a href="" >ms_af_asp_kind</a></li>
-                                    <li><a href="" >review</a></li>
-                                    <li><a href="" >seo_text </a></li>
-                                    <li><a href="" >ms_access_type</a></li>
-                                    <li><a href="" >ms_daycare_center</a></li>
-                                    <li><a href="" >ms_dormitory</a></li>
-                                    <li><a href="" >ms_emergency_specification</a></li>
-                                    <li><a href="" >ms_facility_form</a></li>
-                                    <li><a href="" >ms_focus</a></li>
-                                    <li><a href="" >ms_haizokums_holiday</a></li>
-                                    <li><a href="" >ms_leave_childbirth</a></li>
-                                    <li><a href="" >ms_nursing_standard</a></li>
-                                    <li><a href="" >ms_qualification</a></li>
-                                    <li><a href="" >ms_shift_system</a></li>
-                                    <li><a href="" >ms_treatment_subject</a></li>
-                                    <li><a href="" >ms_working_style</a></li>
-                                    <li><a href="" >ms_working_style_time</a></li>
-                                </ul>
-                            </li>
-
-                        </ul>
-                    </div> <!-- /.subnav-collapse -->
-
-                </div> <!-- /container -->
-            </div> <!-- /subnavbar-inner -->
-        </div> <!-- /subnavbar -->
+        <?php echo $this->Element('menu'); ?>
 
 
 
@@ -211,7 +131,7 @@
                     </div>
 
                     <div id="footer-terms" class="span6">
-                        Other info
+
                     </div>
 
                 </div> <!-- /row -->

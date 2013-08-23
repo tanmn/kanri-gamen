@@ -2,7 +2,6 @@
 
 App::uses('AppController', 'Controller');
 App::uses('File', 'Utility');
-App::uses('Folder', 'Utility');
 
 /**
  * Static content controller
@@ -14,13 +13,46 @@ App::uses('Folder', 'Utility');
 class PhotosController extends AppController {
 
     public $components = array('Common');
-    public $uses = array('Photo');
+    public $uses = array('Photo', 'HospitalPhoto');
+    public $Sender = null;
+    public $success = array();
+    public $errors = array();
+    public $queues = array();
 
 
+    /**
+     * Photo management
+     *
+     * @author Mai Nhut Tan
+     * @since 2013/08/22
+     */
     public function index(){
         //check enabled or disabled
         if(!ENABLE_PHOTO_MANAGEMENT){
             throw new ForbiddenException(__('This feature is disabled.'));
+        }
+
+        //handle submit action
+        if($this->request->is('post') || $this->request->is('push')){
+            if(isset($this->request->data['delete'])){
+                $data = $this->request->data['delete'];
+                $image_link = $this->Photo->find('list', array('conditions' => array('Photo.id' => $data)));
+
+                //delete in DB
+                if($this->Photo->deleteAll(array('Photo.id' => $data))){
+                    //delete files
+                    foreach($image_link as $path){
+                        $path = SAVED_PHOTO_DIR . $path;
+
+                        $file = new File($path);
+                        $file->delete();
+                    }
+
+                    $this->Session->setFlash(sprintf(__('%d photo(s) deleted successfully.'), count($image_link)), 'success');
+                }else{
+                    $this->Session->setFlash(__('Cannot delete photo(s).'), 'error');
+                }
+            }
         }
 
         //setup paginate
@@ -54,24 +86,186 @@ class PhotosController extends AppController {
 
 
 
+    /**
+     * Show upload form
+     *
+     * @author Mai Nhut Tan
+     * @since 2013/08/23
+     */
+    public function import(){
+        $this->saveHospitalPhotoToDB(array(
+            'hospital_data_id' => 1,
+            'photo_id'=>6190,
+            'disp_no' => 1,
+            'comment_of_photo' => ''
+        ));
+
+        die();
+
+        if($this->request->is('post') || $this->request->is('push')){
+            if(isset($this->request->data['file']['tmp_name']) && file_exists($this->request->data['file']['tmp_name'])){
+                $temp_file = $this->request->data['file']['tmp_name'];
+                $type = strtolower(preg_replace('/^.*\./', '', $this->request->data['file']['name']));
+
+                if($type == UPLOAD_FILETYPE_CSV){
+                    $raw = $this->Common->csv2array($temp_file);
+
+                    //create hash to store data on session
+                    $hash = md5($temp_file);
+
+                    //prepare data
+                    $data = array();
+                    foreach($raw as $item){
+                        if(empty($item[0]) || !is_numeric($item[0])) continue;
+
+                        $data[] = array(
+                            'hash'          => $hash,
+                            'hospital_id'   => $item[0],
+                            'filename'      => isset($item[1]) ? $item[1] : '',
+                            'disp_no'        => isset($item[2]) ? $item[2] : '',
+                            'comment_of_photo' => isset($item[3]) ? $item[3] : ''
+                        );
+                    }
+
+                    $this->Session->write(CSV_BUFFER_SESSION_NAME . '.' .$hash, $data);
+                }else{
+                    $this->Session->setFlash(__('Filetype is incorrect.'), 'error');
+                }
+
+                unlink($temp_file);
+            }else{
+                $this->Session->setFlash(__('Upload error.'), 'error');
+            }
+        }
+
+        $this->set(array(
+            'title_for_layout' => 'Import photos from CSV',
+            'hash' => isset($hash) ? $hash : NULL
+        ));
+    }
 
 
 
 
 
+    /**
+     * Process after upload
+     *
+     * @author Mai Nhut Tan
+     * @since 2013/08/23
+     */
+    public function process($hash = ''){
+        ob_start();
+        $data = $this->Session->read(CSV_BUFFER_SESSION_NAME . '.' .$hash);
+        session_write_close();
+
+        if(!empty($data)){
+            //initializing
+            set_time_limit(MAX_PROCESS_TIMEOUT);
+            $this->initSender();
+
+            //process
+            foreach($data as $item){
+                $fileurl = $item['filename'];
+
+                //if it's an url without protocol then add default photo source
+                if(!preg_match('/^http/i', $fileurl)){
+                    if(!preg_match('/^\//', $fileurl)){
+                        $fileurl = '/' . $fileurl;
+                    }
+
+                    $fileurl = PHOTO_SOURCE_URL . $fileurl;
+                }
+
+                //making request
+                $request = new RollingCurlRequest($fileurl);
+                $request->user_var = $item;
+                $this->Sender->add($request);
+            }
+
+            //start fetching URLs
+            $this->success = array();
+            $this->errors = array();
+            $this->queues = array();
+            $this->Sender->execute();
+
+            //save Hospital Photo queues
+            foreach($this->queues as $item){
+                $this->saveHospitalPhotoToDB($item);
+            }
+
+            //cleanup
+            $this->Session->delete(CSV_BUFFER_SESSION_NAME . '.' .$hash);
+            $this->Session->delete(CSV_BUFFER_SESSION_NAME . '.Info.' .$hash);
+            $this->Session->setFlash(sprintf(__('%d row(s) updated successfully, %d row(s) error.'), count($this->success), count($this->errors)), 'success');
+
+            //output information
+            @session_start();
+            $this->processInfo($hash);
+            ob_end_flush();
+        }else{
+            $this->Session->setFlash(__('Data is empty.'), 'error');
+        }
+
+        $this->redirect(array('action' => 'import'));
+    }
 
 
 
 
+    /**
+     * Update import process information
+     *
+     * @author Mai Nhut Tan
+     * @since 2013/08/23
+     */
+    protected function setProcessInfo($hash){
+        @session_start();
+        $total = count($this->Session->read(CSV_BUFFER_SESSION_NAME . '.' . $hash));
+        $complete = count($this->success);
+        $percent = $complete / $total * 100;
+
+        $this->Session->write(CSV_BUFFER_SESSION_NAME . '.Info.' . $hash, array(
+            'error' => count($this->errors),
+            'complete' => $complete,
+            'error_data' => $this->errors,
+            'total' => $total,
+            'percent' => $percent
+        ));
+        @session_write_close();
+    }
 
 
 
-    public $dataPhoto = array();
-    public $dataHospital = array();
-    public $photo_id = 0;
 
-    public function beforeFilter() {
+    /**
+     * Read import process information
+     *
+     * @author Mai Nhut Tan
+     * @since 2013/08/23
+     */
+    public function processInfo($hash){
+        $this->autoLayout = false;
+        $this->autoRender = false;
+
+        $data = $this->Session->read(CSV_BUFFER_SESSION_NAME . '.Info.' .$hash);
+
+        header('Content-type: text/json');
+        echo json_encode($data);
+        exit;
+    }
+
+
+
+    /**
+     * Init request sender
+     *
+     * @author Mai Nhut Tan
+     * @since 2013/08/23
+     */
+    public function initSender() {
         App::import('Vendor', 'RollingCurl/RollingCurl');
+
         $this->Sender = new RollingCurl(array($this, 'on_request_done'));
         $this->Sender->window_size = MAX_REQUEST_THREAD;
         $this->Sender->options = array(
@@ -84,155 +278,120 @@ class PhotosController extends AppController {
         );
     }
 
+
+
+
+
     /**
-     * multithread call action request
+     * Init request sender
+     *
+     * @author Mai Nhut Tan
+     * @since 2013/08/23
      */
     function on_request_done($content, $info, $request) {
+        //get processed item
         $item = $request->user_var;
-        if ($info['http_code'] != 200) {
-            $this->Session->setFlash(__("Can not upload data"));
-            return;
+
+        //generate file path
+        $fileext  = preg_replace('/^.+\./', '', $info['url']);
+        $filename = $this->getName($item) . (empty($fileext) ? '' : '.' . $fileext);
+
+
+        //check http code for success
+        if($info['http_code'] == 200){
+            //store content to disk
+            $filepath = SAVED_PHOTO_FULLPATH . $item['hospital_id'] . DS . $filename;
+            $this->saveContent($content, $filepath);
         }
-        $fileext = preg_replace('/^.+\./', '', $info['url']);
-        $filename = $this->getName($item) . '.' . $fileext;
-        $pathFileName = SAVED_PHOTO_PATH . $item[0] . DS . $filename;
-        $filepath = SAVED_PHOTO_DIR . $pathFileName;
-        //store content to disk
-        if ($this->saveContent($content, $filepath)) {
-            $this->photo_id++;
-            $this->dataPhoto[] = array(
-                'id' => $this->photo_id,
-                'filename' => $pathFileName,
-                'target_id' => intval($item[0]),
-                'target_flag' => DEFAULT_PHOTO_TARGET_FLAG,
+
+        //save to database
+        $photo_id = $this->saveToDB(array(
+            'filename' => SAVED_PHOTO_PATH . $item['hospital_id'] . DS . $filename,
+            'target_id' => $item['hospital_id'],
+            'target_flag' => DEFAULT_PHOTO_TARGET_FLAG
+        ));
+
+        if(!$photo_id || $info['http_code'] != 200){
+            $this->errors[] = $item;
+        }else{
+            $this->success[] = $item;
+            $this->queues[$item['hospital_id']] = array(
+                'hospital_data_id' => $item['hospital_id'],
+                'photo_id' => $photo_id,
+                'disp_no' => $item['disp_no'],
+                'comment_of_photo' => @$item['comment_of_photo']
             );
-            $this->dataHospital[] = array(
-                'hospital_data_id' => intval($item[0]),
-                'photo_id' => $this->photo_id,
-                'disp_no' => intval($item[2]),
-                'comment_of_photo' => $item[3],
-            );
         }
+
+        $this->setProcessInfo($item['hash']);
     }
+
+
+
+
 
     /**
-     * upload file csv and insert data
+     * Init request sender
      *
-     * @method upload
-     * @param null
-     * @return null
-     * @author Ngoc Thai
-     * @since 2013-08-20
+     * @author Mai Nhut Tan
+     * @since 2013/08/23
      */
-    function upload() {
-        if ($this->request->is("post")) {
-            $data = $this->request->data;
-            $this->Photo->set($data['Photo']);
-            if ($this->Photo->createValidate()) {
-                $filePath = CSV_UPLOAD_PATH . $data['Photo']["file"]["name"];
-                //echo SAVED_FILE_UPLOAD_CSV_PHOTO;
-                if (move_uploaded_file($data['Photo']["file"]["tmp_name"], $filePath)) {
-                    $photo = $this->Photo->find("first", array(
-                        'fields' => "Photo.id",
-                        'order' => array("Photo.id DESC")
-                    ));
-                    $this->photo_id = $photo['Photo']['id'];
-                    $result = $this->actionUpload($filePath);
-                    if ($result) {
-                        $this->Session->setFlash("upload data Success");
-                        if (!empty($this->dataPhoto) && !empty($this->dataHospital)) {
-                            APP::import("model", array("Photo", "HospitalPhoto"));
-                            $this->Photo = new Photo();
-                            $this->Photo->begin();
-                            $this->Photo->create();
-                            if (!$this->Photo->saveMany($this->dataPhoto)) {
-                                $this->Photo->rollback();
-                                return;
-                            } else {
-                                $this->HospitalPhoto = new HospitalPhoto();
-                                $this->HospitalPhoto->create();
-                                if (!$this->HospitalPhoto->saveMany($this->dataHospital)) {
-                                    $this->Photo->rollback();
-                                    return;
-                                } else {
-                                    $this->Photo->commit();
-                                }
-                            }
-                        }
-                    } else {
-                        $this->Session->setFlash(__("Can not upload data"));
-                    }
-                } else {
-                    $this->Session->setFlash(__("Can not upload data"));
-                }
-            } else {
-                $this->Session->setFlash(__("Can not upload data"));
-            }
-        }
-    }
-
-    function CheckExistKeyInArray($result, $value, $count) {
-        for ($i = 0; $i < $count; $i++)
-            if (!empty($result[$i][0])) {
-                if ($result[$i][0] == $value) {
-                    CakeLog::write('UPLOAD_CSV( ' . date("Y-m-d") . " )", __("Can not save data With hospital_id: " . $value));
-                    return true;
-                }
-            }
-        return false;
-    }
-
-    /**
-     * action uload file
-     *
-     * @method actionUpload
-     * @param path file uploads
-     * @return null
-     * @author Ngoc Thai
-     * @since 2013-08-20
-     */
-    function actionUpload($filePath) {
-        if (!empty($filePath)) {
-            $common = $this->Components->load('Common');
-            $result = $common->convertCsvFileDefault($filePath);
-            unset($result[0]);
-            $i = 0;
-            foreach ($result as $value) {
-                if (!empty($value[0]) && !$this->CheckExistKeyInArray($result, $value[0], $i)) {
-                    $request = new RollingCurlRequest($value[1]);
-                    $request->user_var = $value;
-                    $this->Sender->add($request);
-                    $i++;
-                }
-            }
-            $this->Sender->execute();
-            return TRUE;
-        }
-        return FALSE;
-    }
-
-    /**
-     * save File
-     *
-     * @method saveContent
-     * @param path file uploads
-     * @return null
-     * @author Ngoc Thai
-     * @since 2013-08-20
-     */
-    function saveContent($content, $filepath) {
+    function saveContent($content, $filepath){
+        $dir = basename($filepath);
         $file = new File($filepath, true, 0644);
-        if (!$file->write($content)) {
+
+        if(!$file->write($content)){
             return false;
         }
+
         return true;
     }
 
+
+
+
+
     /**
-     * Get randomized 32 character name
+     * Save Photo data
+     *
+     * @author Mai Nhut Tan
+     * @since 2013/08/23
      */
-    function getName($item) {
-        return md5($item[0]);
+    function saveToDB($photoObject){
+        $this->Photo->create();
+        if(!$this->Photo->save($photoObject)) return false;
+
+        return $this->Photo->getLastInsertID();
+    }
+
+
+
+
+    /**
+     * Save Photo data
+     *
+     * @author Mai Nhut Tan
+     * @since 2013/08/23
+     */
+    function saveHospitalPhotoToDB($photoObject){
+        $this->HospitalPhoto->create();
+        if(!$this->HospitalPhoto->save($photoObject)) return false;
+
+        return $this->HospitalPhoto->getLastInsertID();
+    }
+
+
+
+
+
+    /**
+     * Get unique file name
+     *
+     * @author Mai Nhut Tan
+     * @since 2013/08/23
+     */
+    function getName($item){
+        return md5($item['hospital_id'] . '-' . $item['filename']);
     }
 
 }

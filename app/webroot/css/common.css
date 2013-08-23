@@ -1,3 +1,7 @@
+body{
+    min-width: 480px;
+}
+
 .brand sup{
     font-size: 50%;
     font-weight: normal;
@@ -42,4 +46,96 @@
 #debugger table th{
     border: 1px solid #333;
     border-collapse: collapse;
+}
+
+/*========== Stack trace ==========*/
+.error-container h3{
+    text-align: left;
+    font-size: 16px;
+    margin-top: 30px;
+}
+
+.cake-stack-trace {
+    font: 13px/150% Consolas, "Courier";
+    text-align: left;
+}
+
+
+/*========== Paginator fix ==========*/
+.pagination li.current,
+.pagination li.inactive {
+    float: left;
+    border: 1px solid #dddddd;
+    border-left-width: 0;
+    padding: 0 10px;
+    margin-right: .5em;
+    line-height: 32px;
+    color: #444444;
+    text-shadow: 0 -1px 0 rgba(255, 255, 255, 0.25);
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.pagination li.current{
+    background-color: #eb8d00;
+    background-image: -moz-linear-gradient(top, #ff9900, #cc7a00);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ff9900), to(#cc7a00));
+    background-image: -webkit-linear-gradient(top, #ff9900, #cc7a00);
+    background-image: -o-linear-gradient(top, #ff9900, #cc7a00);
+    background-image: linear-gradient(to bottom, #ff9900, #cc7a00);
+    background-repeat: repeat-x;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffff9900', endColorstr='#ffcc7a00', GradientType=0);
+    border-color: #cc7a00 #cc7a00 #804d00;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    color: #fff;
+}
+
+/*========== Widget fix ==========*/
+.widget .widget-header label{
+    margin: 11px
+}
+
+/*========== Photos ===========*/
+.gallery-container li{
+    transition: opacity 800ms;
+    -ms-transition: opacity 800ms;
+    -moz-transition: opacity 800ms;
+    -webkit-transition: opacity 800ms;
+}
+
+.gallery-container li.inactive{
+    *zoom: 1;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+    filter: alpha(opacity=30);
+    -moz-opacity: 0.3;
+    -khtml-opacity: 0.3;
+    opacity: 0.3;
+}
+
+.delete_holder {
+    z-index: 100;
+    position: relative;
+    display: block;
+    box-sizing: border-box;
+    width: 186px;
+    margin: 5px 0 0 0;
+    text-align: left;
+    padding: 0 5px;
+    font-size: small;
+}
+
+.delete_chk{
+    margin: 0 5px 0 0!important;
+}
+
+
+/*========== Uplaod fix ==========*/
+.fileupload-new .input-append .btn-file{
+    border-radius: 0;
+}
+
+.fileupload .uneditable-input{
+    white-space: nowrap;
+    overflow:  hidden;
 }
