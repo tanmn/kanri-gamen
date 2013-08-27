@@ -1,5 +1,5 @@
 <?php
-$menu_items = array(
+$menu_item_titles = $menu_items = array(
     'asp',
     'ms_af_asp_id',
     'ms_af_asp_kind',
@@ -22,7 +22,7 @@ $menu_items = array(
 );
 
 foreach($menu_items as &$item){
-    $item = Inflector::camelize($item);
+    $item = Inflector::camelize(Inflector::pluralize($item));
 }
 
 
@@ -190,10 +190,10 @@ $active_class = array(
 
                                 <ul class="dropdown-menu">
                                     <?php
-                                    foreach($menu_items as $item){
+                                    foreach($menu_items as $i => $item){
                                         echo '<li>';
                                         echo $this->Html->link(
-                                            Inflector::underscore($item),
+                                            $menu_item_titles[$i],
                                             array(
                                                 'controller' => $item
                                             ),
