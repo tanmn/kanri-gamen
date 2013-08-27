@@ -29,7 +29,7 @@ foreach($menu_items as &$item){
 $active_tab = strtolower($this->request->params['controller']);
 $active_class = array(
     'home' => $active_tab == 'pages' ? 'active' : '',
-    'hospital' => $active_tab == 'hospitaldata' ? 'active' : '',
+    'hospital' => $active_tab == 'hospitaldata' || $active_tab == 'hospitals' ? 'active' : '',
     'recruitment' => $active_tab == 'recruitingdata' ? 'active' : '',
     'photo' => $active_tab == 'photos' ? 'active' : '',
     'others' => in_array($this->request->params['controller'], $menu_items) ? 'active' : ''
@@ -46,19 +46,6 @@ $active_class = array(
 
                     <div class="subnav-collapse collapse">
                         <ul class="mainnav">
-
-                            <li class="<?php echo $active_class['home']; ?>">
-                                <?php echo $this->Html->link(
-                                    '<i class="icon-home"></i> <span>Home</span>',
-                                    '/',
-                                    array(
-                                        'title' => '',
-                                        'escape' => false
-                                    )
-                                ); ?>
-
-
-
                             <li class="dropdown <?php echo $active_class['hospital']; ?>">
                                 <?php echo $this->Html->link(
                                     '<i class="icon-building"></i> <span>Hospital</span> <b class="caret"></b>',
@@ -102,19 +89,49 @@ $active_class = array(
                                     </li>
                                 </ul>
                             </li>
-                            </li>
 
-                            <li class="<?php echo $active_class['recruitment']; ?>">
+                            <li class="dropdown <?php echo $active_class['recruitment']; ?>">
                                 <?php echo $this->Html->link(
-                                    '<i class="icon-bullhorn"></i> <span>Recuitment</span>',
+                                    '<i class="icon-bullhorn"></i> <span>Recuitment</span> <b class="caret"></b>',
                                     array(
                                         'controller' => 'RecruitingData'
                                     ),
                                     array(
                                         'title' => 'Recuitment',
-                                        'escape' => false
+                                        'escape' => false,
+                                        'class' => 'dropdown-toggle',
+                                        'data-toggle' => 'dropdown'
                                     )
                                 ); ?>
+
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <?php echo $this->Html->link(
+                                            '<i class="icon-bullhorn"></i> Recuitment management',
+                                            array(
+                                                'controller' => 'RecruitingData',
+                                                'action' => 'index'
+                                            ),
+                                            array(
+                                                'title' => 'Recuitment management',
+                                                'escape' => false
+                                            )
+                                        ); ?>
+                                    </li>
+                                    <li>
+                                        <?php echo $this->Html->link(
+                                            '<i class="icon-file"></i> Import from CSV',
+                                            array(
+                                                'controller' => 'RecruitingData',
+                                                'action' => 'import'
+                                            ),
+                                            array(
+                                                'title' => 'Import from CSV',
+                                                'escape' => false
+                                            )
+                                        ); ?>
+                                    </li>
+                                </ul>
                             </li>
 
                             <li class="dropdown <?php echo $active_class['photo']; ?>">

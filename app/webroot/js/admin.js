@@ -11,7 +11,8 @@ $(function(){
                 }
             },
             openEffect: 'elastic',
-            closeEffect: 'elastic'
+            closeEffect: 'elastic',
+            tpl: {error: '<p class="text-error">Cannot retrieve data. Please try again later.</p>'}
         });
     }
 
