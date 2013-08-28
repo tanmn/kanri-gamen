@@ -3,6 +3,10 @@ App::uses('AppModel', 'Model');
 /**
  * Asp Model
  *
+ * @property Media $Media
+ * @property AfAsp $AfAsp
+ * @property FAspId $FAspId
+ * @property FAspKind $FAspKind
  */
 class Asp extends AppModel {
 
@@ -12,32 +16,4 @@ class Asp extends AppModel {
  * @var mixed False or table name
  */
 	public $useTable = 'asp';
-
-/**
- * Validation rules
- *
- * @var array
- */
-	public $validate = array(
-		'media_id' => array(
-            'notempty' => array(
-                'rule' => array('checkEmpty'),
-                'message' => 'Not empty'
-            ),
-			'numeric' => array(
-				'rule' => array('numeric'),
-				'message' => 'Must be a number',
-			),
-		),
-        'af_asp_id' => array(
-            'notempty' => array(
-                'rule' => array('checkEmpty'),
-                'message' => 'Not empty'
-            ),
-			'numeric' => array(
-				'rule' => array('numeric'),
-				'message' => 'Must be a number',
-			),
-		),
-	);
 }
