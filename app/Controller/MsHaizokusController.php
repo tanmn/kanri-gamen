@@ -1,11 +1,11 @@
 <?php
 App::uses('AppController', 'Controller');
 /**
- * Asps Controller
+ * MsHaizokus Controller
  *
  */
-class AspsController extends AppController {
-
+class MsHaizokusController extends AppController {
+    public $uses = array('MsHaizoku');
 /**
  * Scaffold
  *
@@ -17,8 +17,9 @@ class AspsController extends AppController {
         parent::beforeFilter();
         $action = $this->request->params['action'];
         if($action == 'index') {
-            $defaultFields = array('id', 'media_id', 'af_asp_id', 'insert_date', 'update_date');
+            $defaultFields = array('id', 'haizoku_name', 'insert_date', 'update_date');
             $this->set('defaultFields', $defaultFields);
         }
     }
+
 }

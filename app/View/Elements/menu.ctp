@@ -4,14 +4,15 @@ $menu_item_titles = $menu_items = array(
     'ms_af_asp_id',
     'ms_af_asp_kind',
     'review',
-    'seo_text ',
+    'seo_text',
     'ms_access_type',
     'ms_daycare_center',
     'ms_dormitory',
     'ms_emergency_specification',
     'ms_facility_form',
     'ms_focus',
-    'ms_haizokums_holiday',
+    'ms_haizoku',
+    'ms_holiday',
     'ms_leave_childbirth',
     'ms_nursing_standard',
     'ms_qualification',
@@ -25,7 +26,6 @@ foreach($menu_items as &$item){
     $item = Inflector::camelize(Inflector::pluralize($item));
 }
 
-
 $active_tab = strtolower($this->request->params['controller']);
 $active_class = array(
     'home' => $active_tab == 'pages' ? 'active' : '',
@@ -34,6 +34,7 @@ $active_class = array(
     'photo' => $active_tab == 'photos' ? 'active' : '',
     'others' => in_array($this->request->params['controller'], $menu_items) ? 'active' : ''
 );
+
 
 ?>
         <div class="subnavbar">
@@ -190,12 +191,12 @@ $active_class = array(
 
                                 <ul class="dropdown-menu">
                                     <?php
-                                    foreach($menu_items as $i => $item){
+                                    for($i = 0; $i < count($menu_items); $i++) {
                                         echo '<li>';
                                         echo $this->Html->link(
                                             $menu_item_titles[$i],
                                             array(
-                                                'controller' => $item
+                                                'controller' => $menu_items[$i]
                                             ),
                                             array(
                                                 'title' => '',

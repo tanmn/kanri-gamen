@@ -44,8 +44,10 @@
                 <?php
                 for ($i = 0; $i < count($defaultFields); $i++) {
                     $defaultFields[$i] = str_replace('HospitalDatum.', '', $defaultFields[$i]);
-                    $dates = array('insert_date', 'update_date', 'history_date', 'ko_last_sync_date', 'last_geo_get_date');
-                    if (in_array($defaultFields[$i], $dates) || strpos($defaultFields[$i], '_id') !== false) {
+                    if(strpos($defaultFields[$i], '_date') !== false) {
+                        $this->request->data['HospitalDatum'][$defaultFields[$i]] = date("Y/m/d H:i:s"). substr((string)microtime(), 1, 6);
+                    }
+                    if (strpos($defaultFields[$i], '_id') !== false) {
                         echo $this -> Form -> input($defaultFields[$i], array('type' => 'text'));
                     } else {
                         echo $this -> Form -> input($defaultFields[$i]);

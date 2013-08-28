@@ -1,10 +1,10 @@
 <?php
 App::uses('AppController', 'Controller');
 /**
- * Asps Controller
+ * MsEmergencySpecifications Controller
  *
  */
-class AspsController extends AppController {
+class MsEmergencySpecificationsController extends AppController {
 
 /**
  * Scaffold
@@ -17,7 +17,7 @@ class AspsController extends AppController {
         parent::beforeFilter();
         $action = $this->request->params['action'];
         if($action == 'index') {
-            $defaultFields = array('id', 'media_id', 'af_asp_id', 'insert_date', 'update_date');
+            $defaultFields = array('id', 'emergency_specification', 'status', 'insert_date', 'update_date');
             $this->set('defaultFields', $defaultFields);
         }
     }

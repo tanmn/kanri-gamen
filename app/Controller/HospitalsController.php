@@ -9,103 +9,20 @@ App::uses('AppController', 'Controller');
  * @since       2013-08-16
  */
 class HospitalsController extends AppController {
-    //public $scaffold;
+    public $scaffold;
     public $uses = array('HospitalDatum');
 
     public function beforeFilter() {
         parent::beforeFilter();
-        $this->set('defaultFields', $this->HospitalDatum->defaultFields);
-    }
-
-/**
- * index method
- *
- * @return void
- */
-    public function index() {
-        $this->paginate = array(
-            'fields' => $this->HospitalDatum->defaultFields,
-        );
-        $this->HospitalDatum->recursive = -1;
-		$this->set('hospitalData', $this->paginate());
-	}
-
-/**
- * view method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
-    public function view($id = null) {
-        $this->HospitalDatum->id = $id;
-
-        if (!$this->HospitalDatum->exists()) {
-            throw new NotFoundException(__('Invalid photo'));
+        $action = $this->request->params['action'];
+        if($action == 'index') {
+            $defaultFields = array('id', 'hospital_name', 'hospital_name_kana', 'insert_date', 'update_date');
+        } else {
+            $defaultFields = $this->HospitalDatum->defaultFields;
+            foreach($defaultFields as $key => $value) {
+                $defaultFields[$key] = str_replace('HospitalDatum.', '', $defaultFields[$key]);
+            }
         }
-
-        $this->set(
-            'hospitalDatum',
-            $this->HospitalDatum->find(
-                'first',
-                array(
-                    'fields' => $this->HospitalDatum->defaultFields,
-                    'conditions' => array('id' => $id)
-                )
-            )
-        );
+        $this->set('defaultFields', $defaultFields);
     }
-
-/**
- * edit method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
-	public function edit($id = null) {
-		$this->HospitalDatum->id = $id;
-		if (!$this->HospitalDatum->exists()) {
-			throw new NotFoundException(__('Invalid HospitalDatum'));
-		}
-		if ($this->request->is('post') || $this->request->is('put')) {
-			if ($this->HospitalDatum->save($this->request->data)) {
-				$this->Session->setFlash(__('Data has been updated.'), 'success');
-                $this->redirect(array('action' => 'index'));
-			} else {
-			}
-		} else {
-			$this->request->data = $this->HospitalDatum->find('first',
-                array(
-                    'fields' => $this->HospitalDatum->defaultFields,
-                    'conditions' => array('id' => $id)
-                )
-            );
-		}
-	}
-
-/**
- * delete method
- *
- * @throws MethodNotAllowedException
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
-	public function delete($id = null) {
-		if (!$this->request->is('post')) {
-			throw new MethodNotAllowedException();
-		}
-
-		$this->HospitalDatum->id = $id;
-		if (!$this->HospitalDatum->exists()) {
-			throw new NotFoundException(__('Invalid ID.'), 'error');
-		}else if ($this->HospitalDatum->delete()) {
-			$this->Session->setFlash(__('Data has been deleted.'), 'success');
-		}else{
-		    $this->Session->setFlash(__('Cannot delete data.'), 'error');
-		}
-
-		$this->redirect(array('action' => 'index'));
-	}
 }

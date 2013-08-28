@@ -7,117 +7,29 @@ App::uses('AppController', 'Controller');
  */
 class RecruitingDataController extends AppController
 {
-
+    public $scaffold;
     public $uses = array('RecruitingDatum');
     public $components = array('Common');
 
-    public function beforeFilter()
-    {
+    public function beforeFilter() {
         parent::beforeFilter();
-        $this->set('defaultFields', $this->RecruitingDatum->defaultFields);
-    }
-
-    /**
-     * index method
-     *
-     * @return void
-     */
-    public function index()
-    {
-        $this->paginate = array(
-            'fields' => $this->RecruitingDatum->defaultFields
-        );
-        $this->RecruitingDatum->recursive = -1;
-        $this->set('recruitingData', $this->paginate());
-    }
-
-    /**
-     * view method
-     *
-     * @throws NotFoundException
-     * @param string $id
-     * @return void
-     */
-    public function view($id = null)
-    {
-        $this->RecruitingDatum->id = $id;
-        if (!$this->RecruitingDatum->exists()) {
-            throw new NotFoundException(__('Invalid ID.', 'error'));
-        }
-        $this->set('recruitingDatum', $this->RecruitingDatum->find('first', array(
-            'fields' => $this->RecruitingDatum->defaultFields,
-            'conditions' => array(
-                'id' => $id
-            )
-        )));
-    }
-
-    /**
-     * edit method
-     *
-     * @throws NotFoundException
-     * @param string $id
-     * @return void
-     */
-    public function edit($id = null)
-    {
-        $this->RecruitingDatum->id = $id;
-        if (!$this->RecruitingDatum->exists()) {
-            throw new NotFoundException(__('Invalid ID.'), 'error');
-        }
-        if ($this->request->is('post') || $this->request->is('put')) {
-            if ($this->RecruitingDatum->save($this->request->data)) {
-                $this->Session->setFlash(__('Data has been saved.'), 'success');
-                $this->redirect(array(
-                    'action' => 'index'
-                ));
-            } else {
+        $action = $this->request->params['action'];
+        if($action == 'index') {
+            $defaultFields = array('id', 'hospital_data_id', 'qualification_id', 'working_style_id', 'recruitment_start_date', 'recruitment_end_date');
+        } else {
+            $defaultFields = $this->RecruitingDatum->defaultFields;
+            foreach($defaultFields as $key => $value) {
+                $defaultFields[$key] = str_replace('RecruitingDatum.', '', $defaultFields[$key]);
             }
-        } else {
-            $this->request->data = $this->RecruitingDatum->find('first', array(
-                'fields' => $this->RecruitingDatum->defaultFields,
-                'conditions' => array(
-                    'id' => $id
-                )
-            ));
         }
+        $this->set('defaultFields', $defaultFields);
     }
-
-    /**
-     * delete method
-     *
-     * @throws MethodNotAllowedException
-     * @throws NotFoundException
-     * @param string $id
-     * @return void
-     */
-    public function delete($id = null)
-    {
-        if (!$this->request->is('post')) {
-            throw new MethodNotAllowedException();
-        }
-
-        $this->RecruitingDatum->id = $id;
-        if (!$this->RecruitingDatum->exists()) {
-            throw new NotFoundException(__('Invalid ID.'), 'error');
-        } else if ($this->RecruitingDatum->delete()) {
-            $this->Session->setFlash(__('Data has been deleted.'), 'success');
-        } else {
-            $this->Session->setFlash(__('Cannot delete data.'), 'error');
-        }
-
-        $this->redirect(array(
-            'action' => 'index'
-        ));
-    }
-
-
 
     /**
      * Show upload form
      *
-     * isset(author Mai Nhut Tan
-     * isset(since 2013/08/27
+     * @author Mai Nhut Tan
+     * @since 2013/08/27
      */
     public function import()
     {
@@ -148,8 +60,8 @@ class RecruitingDataController extends AppController
     /**
      * Show upload form
      *
-     * isset(author Mai Nhut Tan
-     * isset(since 2013/08/27
+     * @author Mai Nhut Tan
+     * @since 2013/08/27
      */
     function saveToDatabase($array)
     {
