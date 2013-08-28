@@ -21,13 +21,9 @@ class UpdateRecordCountTask extends AppShell {
      */
     public function execute() {
         $this->out('================================================');
-        $this->out('   FETCH QUEUED PHOTOS AND SAVE TO THE SERVER   ');
+        $this->out('        UPDATE RECORD COUNT INTO DATABASE       ');
         $this->out('================================================');
         $this->out();
-
-        $pref_count = $this->getData($this->MsPrefecture, 'pref_cd');
-        $ward_count = $this->getData($this->MsWard, 'ward_cd');
-        //$station_count = $this->getData($this->MsStation, 'station_cd1', 'station_cd');
 
         //process confirmation
         $response = $this->in(__d('cake_console', 'All rows will be updated with new count data. Continue?'), array('y', 'n'), 'y');
@@ -36,79 +32,260 @@ class UpdateRecordCountTask extends AppShell {
             return;
         }
 
+        $this->out();
+        $this->out(__('Please wait while program is collecting data. It might take a few minutes to be completed.'));
 
+        //get count data
+        $dataPrefecture = $this->_getDataObject('pref_cd');
+        $dataWard       = $this->_getDataObject('ward_cd');
+        $dataStations1  = $this->_getDataObject('station_n_cd1');
+        $dataStations2  = $this->_getDataObject('station_n_cd2');
+        $dataStations3  = $this->_getDataObject('station_n_cd3');
+        $dataStations   = $this->_mergeStationCount($dataStations1, $dataStations2);
+        $dataStations   = $this->_mergeStationCount($dataStations, $dataStations3);
 
-        $this->MsWard->updateAll($ward_count);
-        $ward_updated_count = $this->MsWard->getAffectedRows();
+        //update data
+        $this->_update($this->MsWard, 'ward_cd', $dataWard);
+        $this->_update($this->MsPrefecture, 'prefecture_cd', $dataPrefecture);
+        $this->_update($this->MsStation, 'station_g_cd', $dataStations);
 
-        //$this->MsStation->updateAll($station_count);
-        //$station_updated_count = $this->MsStation->getAffectedRows();
-
-        $this->MsPrefecture->updateAll($pref_count);
-        $pref_updated_count = $this->MsPrefecture->getAffectedRows();
-
+        //terminating
         $this->out();
         $this->hr();
         $this->out('Data has been updated.');
-        $this->out(sprintf(__d('cake_console', 'ms_ward: %d row(s) affected.'), $ward_updated_count));
-        //$this->out(sprintf(__d('cake_console', 'ms_station: %d row(s) affected.'), $station_updated_count));
-        $this->out(sprintf(__d('cake_console', 'ms_prefecture: %d row(s) affected.'), $pref_updated_count));
+    }
+
+
+    /**
+     * Update all count data to DB
+     *
+     * @author Mai Nhut Tan
+     * @since 2013/08/28
+     * @param Model $model
+     * @param string $where_column will be filtered in conditions
+     * @param array $data
+     * @return void
+     */
+    private function _update($model, $where_column, $data){
+        $this->out();
+        $this->out(__('Updating into table %s...', $model->table));
+
+        //reset all rows
+        $model->updateAll(array(
+            'h_count' => 0,
+            'r_count' => 0,
+            'norh_count' => 0
+        ));
+
+        //set new values
+        foreach($data as $code => $fields){
+            $conditons = array($model->alias . '.' . $where_column => $code);
+            $model->updateAll($fields, $conditons);
+            //$this->out(__('Update table %s (h|r|norh) on %s = %s values (%d|%d|%d)', $model->table, $where_column, $code, @$fields['h_count'], @$fields['r_count'], @$fields['norh_count']));
+        }
+
+        $this->out(__('Updated %d row(s) in table %s.', count($data), $model->table));
+    }
+
+
+    /**
+     * Collect and combine h_count, r_count, norh_count data, group by provided column
+     *
+     * @author Mai Nhut Tan
+     * @since 2013/08/28
+     * @param string $column
+     * @return array
+     */
+    private function _getDataObject($column){
+        $h_count = $this->_getHospitalCount($column);
+        $r_count = $this->_getRecruitingCount($column);
+        $norh_count = $this->_getHospitalWithoutRecruitingCount($column);
+
+        $table = array();
+
+        foreach($h_count as $k => $item){
+            if(!isset($table[$k])){
+                $table[$k] = $item;
+            }else{
+                $table[$k]['h_count'] = $item['h_count'];
+            }
+        }
+
+        foreach($r_count as $k => $item){
+            if(!isset($table[$k])){
+                $table[$k] = $item;
+            }else{
+                $table[$k]['r_count'] = $item['r_count'];
+            }
+        }
+
+        foreach($norh_count as $k => $item){
+            if(!isset($table[$k])){
+                $table[$k] = $item;
+            }else{
+                $table[$k]['norh_count'] = $item['norh_count'];
+            }
+        }
+
+        return $table;
+    }
+
+
+    private function _mergeStationCount($data1, $data2){
+        foreach($data2 as $code => $values){
+            if(!isset($data1[$code])){
+                $data1[$code] = $values;
+                continue;
+            }
+
+            foreach($values as $col => $v){
+                if(isset($data1[$code][$col])){
+                    $data1[$code][$col] += $v;
+                    continue;
+                }
+
+                $data1[$code][$col] = $v;
+            }
+        }
+
+        return $data1;
     }
 
     /**
+     * Collect h_count data, group by provided column
      *
+     * @author Mai Nhut Tan
+     * @since 2013/08/28
+     * @param string $column
      * @return array
      */
-    public function getData($model, $column1, $column2 = null){
-
-        if($column2 == null) $column2 = $column1;
-
-        $h_count = $this->_buildCountSubquery(
-            $this->HospitalDatum,
+    private function _getHospitalCount($column){
+        $result = $this->HospitalDatum->find(
+            'all',
             array(
-                'Counted.'.$column1.'='.$model->alias.'.'.$column2
+                'fields' => array(
+                    'HospitalDatum.'.$column,
+                    'COUNT(HospitalDatum.id)'
+                ),
+                'conditions' => array(
+                    'HospitalDatum.posting_flag' => 1,
+                    'HospitalDatum.status' => 1,
+                    'HospitalDatum.'.$column.' IS NOT NULL'
+                ),
+                'group' => array('HospitalDatum.'.$column)
             )
         );
 
-        $r_count = $this->_buildCountSubquery(
-            $this->RecruitingDatum,
-            array(
-                'Counted.'.$column1.'='.$model->alias.'.'.$column2
-            )
-        );
+        $output = array();
 
-        $norh_count = $this->_buildCountSubquery(
-            $this->HospitalDatum,
-            array(
-                'Counted.'.$column1.'='.$model->alias.'.'.$column2,
-                'Counted.norh_flag' => 1
-            )
-        );
+        foreach($result as $item){
+            $code = $item['HospitalDatum'][$column];
+            $count = $item[0]['count'];
 
-        return array(
-            'h_count' => $h_count,
-            'r_count' => $r_count,
-            'norh_count' => $norh_count
-        );
+            $output[$code] = array('h_count' => $count);
+        }
+
+        return $output;
     }
 
-    function _buildCountSubquery($model, $conditions = array()){
-        $db = $model->getDataSource();
-        $subQuery = $db->buildStatement(
+
+    /**
+     * Collect r_count data, group by provided column
+     *
+     * @author Mai Nhut Tan
+     * @since 2013/08/28
+     * @param string $column
+     * @return array
+     */
+    private function _getRecruitingCount($column){
+        $result = $this->RecruitingDatum->find(
+            'all',
             array(
-                'fields'     => array('count(*)'),
-                'table'      => $db->fullTableName($model),
-                'alias'      => 'Counted',
-                'limit'      => null,
-                'offset'     => null,
-                'joins'      => array(),
-                'conditions' => $conditions,
-                'order'      => null,
-                'group'      => null
-            ),
-            $model
+                'joins' => array(
+                    array(
+                        'table' => 'hospital_data',
+                        'alias' => 'HospitalDatum',
+                        'type'  => 'LEFT',
+                        'conditions' => array(
+                            'RecruitingDatum.hospital_data_id = HospitalDatum.id'
+                        )
+                    )
+                ),
+                'fields' => array(
+                    'HospitalDatum.'.$column,
+                    'COUNT(RecruitingDatum.id) AS count'
+                ),
+                'conditions' => array(
+                    'HospitalDatum.posting_flag' => 1,
+                    'HospitalDatum.status' => 1,
+                    'HospitalDatum.'.$column.' IS NOT NULL',
+                    'RecruitingDatum.posting_flag' => 1,
+                    'RecruitingDatum.accept_flag' => 1
+                ),
+                'group' => array('HospitalDatum.'.$column)
+            )
         );
 
-        return "({$subQuery})";
+        $output = array();
+
+        foreach($result as $item){
+            $code = $item['HospitalDatum'][$column];
+            $count = $item[0]['count'];
+
+            $output[$code] = array('r_count' => $count);
+        }
+
+        return $output;
+    }
+
+
+    /**
+     * Collect norh_count data, group by provided column
+     *
+     * @author Mai Nhut Tan
+     * @since 2013/08/28
+     * @param string $column
+     * @return array
+     */
+    private function _getHospitalWithoutRecruitingCount($column){
+        $result = $this->HospitalDatum->find(
+            'all',
+            array(
+                'joins' => array(
+                    array(
+                        'table' => 'recruiting_data',
+                        'alias' => 'RecruitingDatum',
+                        'type'  => 'LEFT',
+                        'conditions' => array(
+                            'RecruitingDatum.hospital_data_id = HospitalDatum.id',
+                            'RecruitingDatum.posting_flag' => 1,
+                            'RecruitingDatum.accept_flag' => 1,
+                        )
+                    )
+                ),
+                'fields' => array(
+                    'HospitalDatum.'.$column,
+                    'COUNT(HospitalDatum.id) AS count'
+                ),
+                'conditions' => array(
+                    'HospitalDatum.posting_flag' => 1,
+                    'HospitalDatum.status' => 1,
+                    'HospitalDatum.'.$column.' IS NOT NULL',
+                    'RecruitingDatum.id IS NULL'
+                ),
+                'group' => array('HospitalDatum.'.$column)
+            )
+        );
+
+        $output = array();
+
+        foreach($result as $item){
+            $code = $item['HospitalDatum'][$column];
+            $count = $item[0]['count'];
+
+            $output[$code] = array('norh_count' => $count);
+        }
+
+        return $output;
     }
 }

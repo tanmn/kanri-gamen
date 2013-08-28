@@ -12,7 +12,7 @@ $(function(){
             },
             openEffect: 'elastic',
             closeEffect: 'elastic',
-            tpl: {error: '<p class="text-error">Cannot retrieve data. Please try again later.</p>'}
+            tpl: {error: '<p class="text-error">This picture does not exist. It may be removed.</p>'}
         });
     }
 
@@ -136,6 +136,10 @@ $(function(){
               'complete': function(){
                   done = true;
                   updateBar(100);
+
+                  setTimeout(function(){
+                      window.location.href = BASE + 'Photos';
+                  }, 2000);
               },
               'error': function(){
                    bar.addClass('bar-danger');

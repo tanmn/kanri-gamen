@@ -151,49 +151,56 @@ class PhotosController extends AppController {
         session_write_close();
 
         if(!empty($data)){
-            //initializing
-            set_time_limit(MAX_PROCESS_TIMEOUT);
-            $this->initSender();
+            try{
+                //initializing
+                set_time_limit(MAX_PROCESS_TIMEOUT);
+                $this->initSender();
 
-            //process
-            foreach($data as $item){
-                $fileurl = $item['filename'];
+                //process
+                foreach($data as $item){
+                    $fileurl = $item['filename'];
 
-                //if it's an url without protocol then add default photo source
-                if(!preg_match('/^http/i', $fileurl)){
-                    if(!preg_match('/^\//', $fileurl)){
-                        $fileurl = '/' . $fileurl;
+                    //if it's an url without protocol then add default photo source
+                    if(!preg_match('/^http/i', $fileurl)){
+                        if(!preg_match('/^\//', $fileurl)){
+                            $fileurl = '/' . $fileurl;
+                        }
+
+                        $fileurl = PHOTO_SOURCE_URL . $fileurl;
                     }
 
-                    $fileurl = PHOTO_SOURCE_URL . $fileurl;
+                    //making request
+                    $request = new RollingCurlRequest($fileurl);
+                    $request->user_var = $item;
+                    $this->Sender->add($request);
                 }
 
-                //making request
-                $request = new RollingCurlRequest($fileurl);
-                $request->user_var = $item;
-                $this->Sender->add($request);
+                //start fetching URLs
+                $this->success = array();
+                $this->errors = array();
+                $this->queues = array();
+                $this->Sender->execute();
+
+                //save Hospital Photo queues
+                $this->HospitalPhoto->saveMany($this->queues, array('validate' => false, 'atomic' => false));
+
+            }catch(Exception $e){
+                $this->Session->setFlash(__('Update fail.'), 'error');
             }
 
-            //start fetching URLs
-            $this->success = array();
-            $this->errors = array();
-            $this->queues = array();
-            $this->Sender->execute();
-
-            //save Hospital Photo queues
-            foreach($this->queues as $item){
-                //$this->saveHospitalPhotoToDB($item);
-            }
+            //output information
+            @session_start();
+            $data = $this->Session->read(CSV_BUFFER_SESSION_NAME . '.Info.' .$hash);
+            header('Content-type: text/json');
+            echo json_encode($data);
 
             //cleanup
             $this->Session->delete(CSV_BUFFER_SESSION_NAME . '.' .$hash);
             $this->Session->delete(CSV_BUFFER_SESSION_NAME . '.Info.' .$hash);
             $this->Session->setFlash(sprintf(__('%d row(s) updated successfully, %d row(s) error.'), count($this->success), count($this->errors)), 'success');
-
-            //output information
-            @session_start();
-            $this->processInfo($hash);
             ob_end_flush();
+
+            die();
         }else{
             $this->Session->setFlash(__('Data is empty.'), 'error');
         }
@@ -306,6 +313,7 @@ class PhotosController extends AppController {
             $this->errors[] = $item;
         }else{
             $this->success[] = $item;
+
             $this->queues[$item['hospital_id']] = array(
                 'hospital_data_id' => $item['hospital_id'],
                 'photo_id' => $photo_id,
