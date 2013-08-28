@@ -67,8 +67,9 @@
                 <?php endforeach; ?>
             </ul>
 
-            <?php if ($paging['pageCount'] > 1): ?>
+
             <div class="pagination">
+                <?php if ($paging['pageCount'] > 1): ?>
                 <ul>
                     <?php
                     echo $this->Paginator->prev(
@@ -108,6 +109,7 @@
                     );
                     ?>
                 </ul>
+                <?php endif; ?>
 
                 <?php
                     echo $this->Form->button(
@@ -124,7 +126,6 @@
                     );
                 ?>
             </div><!-- /pagination -->
-            <?php endif; ?>
 
         </div><!-- /widget-content -->
     </div><!-- /widget -->
