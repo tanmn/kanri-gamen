@@ -3,7 +3,7 @@
 App::uses('AppController', 'Controller');
 
 /**
- * Image resizer
+ * Image optimization
  *
  * @author      Mai Nhut Tan
  * @since       2103-08-22
@@ -13,7 +13,7 @@ class ImagesController extends AppController {
     var $name = 'Image';
     var $uses = array();
 
-    function thumb($width, $height) {
+    public function thumb($width, $height) {
         $this->autoLayout = false;
         $this->autoRender = false;
 
@@ -33,16 +33,16 @@ class ImagesController extends AppController {
             $options = array(
                 'compression' => 5,
                 'keepRatio' => true,
-                'paddings' => true,
+                'paddings' => false,
                 'enlarge' => true,
-                'quality' => 80,
+                'quality' => 50,
                 'chmod' => 0644,
                 'units' => 'px',
                 'height' => $height,
                 'output' => $cache,
                 'width' => $width,
                 'input' => $fullpath,
-                'crop' => false
+                'crop' => true
             );
 
             ImageTool::resize($options);
@@ -50,6 +50,9 @@ class ImagesController extends AppController {
         }
     }
 
+    /**
+     * Output image to browser
+     */
     private function _output($filename){
         $size = getimagesize($filename);
         $mime = $size['mime'];
@@ -62,20 +65,24 @@ class ImagesController extends AppController {
     }
 
     /**
-     * gets the url from the parameters
+     * Get the url from the 3rd parameters
      */
-    function _getPath() {
+    private function _getPath() {
         $params = $this->params['pass'];
+
         // init
         $url = '';
+
         // unset unwanted params
         unset($params[0], $params[1]);
+
         // loop through params
         foreach($params as $p) {
-            $url .= $p . '/';
+            $url .= $p . DS;
         }
+
         // remove last slash
-        $url = substr($url, 0, strrpos($url, '/'));
+        $url = substr($url, 0, strrpos($url, DS));
 
         return $url;
     }
