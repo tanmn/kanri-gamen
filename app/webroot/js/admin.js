@@ -12,7 +12,7 @@ $(function(){
             },
             openEffect: 'elastic',
             closeEffect: 'elastic',
-            tpl: {error: '<p class="text-error">This picture does not exist. It may be removed.</p>'}
+            tpl: {error: '<p class="text-error">This picture does not exist. It might be removed.</p>'}
         });
     }
 
@@ -94,6 +94,7 @@ $(function(){
   if($('#import-csv').length){
       var btn_upload = $('#btn_upload');
       var file_inp = $('#file');
+      var form = btn_upload.closest('form');
 
       btn_upload.click(function(e){
           var file_path = $.trim(file_inp.val());
@@ -105,6 +106,8 @@ $(function(){
           }
 
           btn_upload.button('loading');
+          form.submit();
+          return false;
       });
   }
 

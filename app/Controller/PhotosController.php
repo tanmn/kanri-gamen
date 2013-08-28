@@ -199,9 +199,9 @@ class PhotosController extends AppController {
             $this->Session->delete(CSV_BUFFER_SESSION_NAME . '.Info.' .$hash);
 
             $msg_class = 'info';
-            if($this->errors == 0){
+            if(count($this->errors) == 0){
                 $msg_class = 'success';
-            }else if($this->success == 0){
+            }else if(count($this->success) == 0){
                 $msg_class = 'error';
             }
 
