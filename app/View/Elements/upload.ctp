@@ -1,5 +1,5 @@
 <div class="span12" id="import-csv">
-    <?php echo $this->Form->create(false, array('type' => 'file', 'enctype' => 'multipart/form-data')); ?>
+    <?php echo $this->Form->create(false, array('type' => 'file', 'enctype' => 'multipart/form-data', 'id' => 'importCSVForm')); ?>
     <div class="widget stacked">
         <div class="widget-header">
             <h3>

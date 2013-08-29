@@ -197,12 +197,20 @@ class PhotosController extends AppController {
             //cleanup
             $this->Session->delete(CSV_BUFFER_SESSION_NAME . '.' .$hash);
             $this->Session->delete(CSV_BUFFER_SESSION_NAME . '.Info.' .$hash);
-            $this->Session->setFlash(sprintf(__('%d row(s) updated successfully, %d row(s) error.'), count($this->success), count($this->errors)), 'success');
+
+            $msg_class = 'info';
+            if(count($this->errors) == 0){
+                $msg_class = 'success';
+            }else if(count($this->success) == 0){
+                $msg_class = 'error';
+            }
+
+            $this->Session->setFlash(sprintf(__('%d row(s) updated successfully, %d row(s) error.'), count($this->success), count($this->errors)), $msg_class);
             ob_end_flush();
 
             die();
         }else{
-            $this->Session->setFlash(__('Data is empty.'), 'error');
+            $this->Session->setFlash(__('Data is empty.'), 'info');
         }
 
         $this->redirect(array('action' => 'import'));

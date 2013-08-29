@@ -80,14 +80,12 @@
                 <div class="row">
 
                     <noscript>
-                        <div class="label label-important block clear" style="padding: 10px;">
+                        <div class="label label-important block clear span12" style="padding: 10px;">
                             <marquee>
                             <i class="icon-exclamation-sign"></i>
                             <?php echo __('Please enable Javascript.') ?>
                             </marquee>
                         </div>
-
-                        <div class="row"></div>
 
                         <style type="text/css">
                             noscript + div{
