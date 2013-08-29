@@ -4,7 +4,6 @@ $modelClass = $this->viewVars['modelClass'];
 $data       = $this->viewVars[$pluralVar];
 $defaultFields = empty($defaultFields)?$this->viewVars['scaffoldFields']:$defaultFields;
 
-
 ?>
 <div class="span12">
     <h2><?php echo $this->viewVars['singularHumanName'].__(' Data'); ?></h2>
@@ -38,7 +37,10 @@ $defaultFields = empty($defaultFields)?$this->viewVars['scaffoldFields']:$defaul
                     </td>
             <?php
                 } else { ?>
-                    <td><?php echo h($row[$modelClass][$defaultFields[$i]]); ?>&nbsp;</td>
+                    <td><?php
+                            $field = $row[$modelClass][$defaultFields[$i]];
+                            echo (preg_match("/\d{4}\-\d{2}-\d{2}/", $field))?date(DATETIME_FORMAT, strtotime($field)):h($field); ?>&nbsp;
+                    </td>
             <?php
                 }
             ?>
