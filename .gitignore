@@ -1,10 +1,27 @@
-#/app/Config
-#/app/webroot/images/hospital
-#/app/tmp
+# User specific & automatically generated files #
+#################################################
+/app/Config/database.php
+/app/Config/core.php
+/app/tmp
+/app/webroot/images/hospital
 /lib/Cake/Console/Templates/skel/tmp/
 /plugins
 /vendors
 /build
 /dist
-.DS_Store
 /tags
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db*.class
+*.pyc
+*.pyo
+*/.git/*
+/nbproject/private/
