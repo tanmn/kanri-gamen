@@ -21,15 +21,16 @@ body{
 
 .table th a{
     color: #444;
-    padding-right: 15px;
 }
 
 .table th a.asc{
     background: url(../img/sort-asc.png) 100% 50% no-repeat;
+    padding-right: 15px;
 }
 
 .table th a.desc{
     background: url(../img/sort-desc.png) 100% 50% no-repeat;
+    padding-right: 15px;
 }
 
 /*========== Debugger ==========*/

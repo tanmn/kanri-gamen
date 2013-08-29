@@ -62,7 +62,7 @@ class AppController extends Controller {
         }
 
         //rewrite scaffold title
-        if($this->scaffold !== false){
+        if($this->scaffold !== false && isset($this->viewVars['singularHumanName'])){
             $this->set('controller', $this);
             $this->set('title_for_layout', $this->viewVars['singularHumanName'] . ' management');
         }

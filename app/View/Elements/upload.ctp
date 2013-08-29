@@ -3,7 +3,7 @@
     <div class="widget stacked">
         <div class="widget-header">
             <h3>
-                <i class="icon-file"></i> Import from CSV
+                <i class="icon-upload"></i> Import from CSV
             </h3>
         </div><!-- /widget-header -->
 
