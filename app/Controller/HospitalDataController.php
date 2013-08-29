@@ -15,8 +15,8 @@ class HospitalDataController extends AppController
     /**
      * Show upload form
      *
-     * isset(author Mai Nhut Tan
-     * isset(since 2013/08/23
+     * @author Mai Nhut Tan
+     * @since 2013/08/23
      */
     public function index()
     {
@@ -28,8 +28,8 @@ class HospitalDataController extends AppController
     /**
      * Show upload form
      *
-     * isset(author Mai Nhut Tan
-     * isset(since 2013/08/23
+     * @author Mai Nhut Tan
+     * @since 2013/08/23
      */
     public function import()
     {
@@ -39,7 +39,7 @@ class HospitalDataController extends AppController
                 $type = strtolower(preg_replace('/^.*\./', '', $this->request->data['file']['name']));
 
                 if ($type == UPLOAD_FILETYPE_CSV) {
-                    $data = $this->Common->csv2array($temp_file);
+                    $data = $this->Common->csv2assocArray($temp_file);
                     $this->saveToDatabase($data);
                 } else {
                     $this->Session->setFlash(__('Filetype is incorrect.'), 'error');
@@ -60,49 +60,49 @@ class HospitalDataController extends AppController
     /**
      * Show upload form
      *
-     * isset(author Mai Nhut Tan
-     * isset(since 2013/08/23
+     * @author Mai Nhut Tan
+     * @since 2013/08/23
      */
     function saveToDatabase($array)
     {
         $data = array();
 
+        //prepare data mask from user-defined default fields
+        /*
+        $mask = array();
+        foreach($this->HospitalDatum->defaultFields as $name){
+            $name = str_replace('HospitalDatum.', '', $name);
+            $mask[$name] = null;
+        }
+        */
+
+        //define data mask
+        $mask = array(
+            'id' => NULL,
+            'rw_id' => NULL,
+            'outline' => NULL,
+            'subject' => NULL,
+            'feature_1' => NULL,
+            'feature_t_1' => NULL,
+            'feature_2' => NULL,
+            'feature_t_2' => NULL
+        );
+
         //prepare data
         foreach ($array as $item) {
-            if (empty($item[0]) || !is_numeric($item[0]))
+            if (empty($item['id']) || !is_numeric($item['id']))
                 continue;
 
-            $data[] = array(
-                'id' => $item[0],
-                'rw_id' => isset($item[2]) ? $item[2] : '',
-                'outline' => isset($item[3]) ? $item[3] : '',
-                'subject' => isset($item[4]) ? $item[4] : '',
-                'feature_1' => isset($item[5]) ? $item[5] : '',
-                'feature_t_1' => isset($item[6]) ? $item[6] : '',
-                'feature_2' => isset($item[7]) ? $item[7] : '',
-                'feature_t_2' => isset($item[8]) ? $item[8] : ''
-            );
+            $new_item = $this->Common->array_extend($mask, $item);
+            $data[] = array_filter($new_item);
         }
 
         //process
         if (empty($data)) {
-            $this->Session->setFlash(__('Data is empty.'), 'error');
-        } else {
-            //start inserting
-            $datasource = $this->HospitalDatum->getDataSource();
-
-            $datasource->begin();
-
-            foreach ($data as $item) {
-                $this->HospitalDatum->id = $item['id'];
-
-                if (!$this->HospitalDatum->save($item)) {
-                    $datasource->rollback();
-                    $this->Session->setFlash(sprintf(__('Update failed at item id:%d. Process was restored to last state.'), $item['id']), 'error');
-                }
-            }
-
-            $datasource->commit();
+            $this->Session->setFlash(__('Data is empty.'), 'info');
+        } else if (!$this->HospitalDatum->saveMany($data, array('validate' => false))) {
+            $this->Session->setFlash(__('Update failed. Process was restored to last state.'), 'error');
+        }else{
             $this->Session->setFlash(sprintf(__('%d row(s) updated successfully.'), count($data)), 'success');
         }
     }

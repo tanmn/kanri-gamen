@@ -121,7 +121,7 @@ class RecruitingDatum extends AppModel {
         'RecruitingDatum.base_salary_min',
         'RecruitingDatum.base_salary_max',
     );
-   
+
     /**
      * Validation rules
      *
@@ -135,6 +135,4 @@ class RecruitingDatum extends AppModel {
             ),
         ),
     );
-  
-
 }
