@@ -13,16 +13,28 @@ class RecruitingDataController extends AppController
 
     public function beforeFilter() {
         parent::beforeFilter();
+
         $action = $this->request->params['action'];
+
         if($action == 'index') {
             $defaultFields = array('id', 'hospital_data_id', 'qualification_id', 'working_style_id', 'recruitment_start_date', 'recruitment_end_date');
         } else {
             $defaultFields = $this->RecruitingDatum->defaultFields;
+
             foreach($defaultFields as $key => $value) {
                 $defaultFields[$key] = str_replace('RecruitingDatum.', '', $defaultFields[$key]);
             }
         }
-        $this->set('defaultFields', $defaultFields);
+
+        $this->set(array(
+            'defaultFields' => $defaultFields
+        ));
+    }
+
+    public function beforeRender($options = null){
+        parent::beforeRender($options);
+
+        $this->set('title_for_layout', 'Recruiting Management');
     }
 
     /**

@@ -18,11 +18,14 @@ foreach($data as $key => $value) {
     <div class="widget stacked">
         <div class="widget-header">
             <h3>
-                <i class="icon-table"></i>
-                <?php echo '#'.$this->data[$modelClass]['id'];?>
+                <i class="icon-edit"></i> Edit
+                <?php echo $controller->$modelClass->table; ?>
+                [#<?php echo $this->data[$modelClass]['id'];?>]
             </h3>
 
             <span class="pull-right" style="margin-right: 15px;">
+                <?php echo $this->Html->link(__('Back to index'), array('action' => 'index')); ?>
+                |
                 <?php echo $this->Form->postLink(
                     __('Delete'),
                     array(
@@ -35,7 +38,7 @@ foreach($data as $key => $value) {
                 ?>
             </span>
         </div><!-- /widget-header -->
-        
+
         <div class="widget-content">
             <?php echo $this->Session->flash(); ?>
             <?php echo $this -> Form -> create(
@@ -75,11 +78,20 @@ foreach($data as $key => $value) {
     </div><!-- /widget -->
 </div>
 
-<div class="actions">
-	<h3><?php echo __('Actions'); ?></h3>
-	<ul>
+<div class="span12" id="photo-management">
+    <div class="widget stacked">
+        <div class="widget-header">
+            <h3>
+                <i class="icon-table"></i> Actions
+            </h3>
+        </div><!-- /widget-header -->
 
-		<li><?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $this->Form->value($modelClass.'.id')), null, __('Are you sure you want to delete # %s?', $this->Form->value($modelClass.'id'))); ?></li>
-		<li><?php echo $this->Html->link(__('List Data'), array('action' => 'index')); ?></li>
-	</ul>
+        <div class="widget-content">
+        	<ul>
+
+        		<li><?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $this->Form->value($modelClass.'.id')), null, __('Are you sure you want to delete # %s?', $this->Form->value($modelClass.'id'))); ?></li>
+        		<li><?php echo $this->Html->link(__('Back to index'), array('action' => 'index')); ?></li>
+        	</ul>
+        </div><!-- /widget-content -->
+    </div><!-- /widget -->
 </div>

@@ -4,27 +4,21 @@ $modelClass = $this->viewVars['modelClass'];
 $data       = $this->viewVars[$singularVar];
 $defaultFields = $this->viewVars['scaffoldFields'];
 ?>
+
 <div class="span12" id="photo-management">
     <div class="widget stacked">
         <div class="widget-header">
             <h3>
-                <i class="icon-table"></i>
-                <?php echo $this->viewVars['singularHumanName'].__(' Detail'); ?>
+                <i class="icon-search"></i> View
+                <?php echo $controller->$modelClass->table; ?>
+                [#<?php echo $this->data[$modelClass]['id'];?>]
             </h3>
-            
-            <span class="pull-right" style="margin-right: 15px;">
-                <?php echo $this->Html->link(
-                    'Edit',
-                    array(
-                        'action' => 'edit',
-                        $data[$modelClass]['id']
-                    ),
-                    array(
-                        'title' => 'Edit this item'
-                    )
-                ); ?>
-                |
 
+            <span class="pull-right" style="margin-right: 15px;">
+                <?php echo $this->Html->link(__('Back to index'), array('action' => 'index')); ?>
+                |
+                <?php echo $this -> Html -> link('Edit', array('action' => 'edit', $data[$modelClass]['id']), array('title' => 'Edit this item')); ?>
+                |
                 <?php echo $this->Form->postLink(
                     __('Delete'),
                     array(
@@ -38,7 +32,7 @@ $defaultFields = $this->viewVars['scaffoldFields'];
                 ?>
             </span>
             </div><!-- /widget-header -->
-            
+
         <div class="widget-content">
             <?php echo $this->Session->flash(); ?>
 

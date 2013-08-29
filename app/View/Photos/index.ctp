@@ -15,7 +15,18 @@
 
             <ul class="gallery-container">
                 <?php if(empty($data)): ?>
-                    <p>No photo found.</p>
+                    <p>
+                        No photo found.
+                        <?php echo $this->html->link(
+                            'Import photos now',
+                            array(
+                                'action' => 'import'
+                            ),
+                            array(
+
+                            )
+                        );?>.
+                    </p>
                 <?php endif; ?>
 
                 <?php foreach($data as $photo): ?>
@@ -67,9 +78,8 @@
                 <?php endforeach; ?>
             </ul>
 
-
+            <?php if ($paging['pageCount'] > 1): ?>
             <div class="pagination">
-                <?php if ($paging['pageCount'] > 1): ?>
                 <ul>
                     <?php
                     echo $this->Paginator->prev(
@@ -109,23 +119,35 @@
                     );
                     ?>
                 </ul>
-                <?php endif; ?>
-
-                <?php
-                    echo $this->Form->button(
-                        '<i class="icon-trash"></i> Delete photo(s)',
-                        array(
-                            'id' => 'btn_delete_photos',
-                            'class' => 'btn btn-danger pull-right',
-                            'type' => 'submit',
-                            'div' => array(
-                                'class' => 'pull-right'
-                            ),
-                            'escape' => false
-                        )
-                    );
-                ?>
             </div><!-- /pagination -->
+            <?php endif; ?>
+
+            <?php if ($paging['pageCount'] > 0): ?>
+            <p class="text-center">
+                <small>
+                    <?php
+                echo $this->Paginator->counter(array(
+                'format' => __('Page {:page} of {:pages}, showing {:current} records out of {:count} total, starting on record {:start}, ending on {:end}')
+                ));
+                ?>
+                </small>
+            </p>
+
+            <?php
+                echo $this->Form->button(
+                    '<i class="icon-trash"></i> Delete photo(s)',
+                    array(
+                        'id' => 'btn_delete_photos',
+                        'class' => 'btn btn-danger pull-right',
+                        'type' => 'submit',
+                        'div' => array(
+                            'class' => 'pull-right'
+                        ),
+                        'escape' => false
+                    )
+                );
+            ?>
+            <?php endif; ?>
 
         </div><!-- /widget-content -->
     </div><!-- /widget -->

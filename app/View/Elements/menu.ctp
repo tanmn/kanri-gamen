@@ -148,6 +148,8 @@ $active_class = array(
                                 ); ?>
 
                                 <ul class="dropdown-menu">
+
+                                    <?php if(ENABLE_PHOTO_MANAGEMENT): ?>
                                     <li>
                                         <?php echo $this->Html->link(
                                             '<i class="icon-picture"></i> Photo management',
@@ -161,6 +163,8 @@ $active_class = array(
                                             )
                                         ); ?>
                                     </li>
+                                    <?php endif; ?>
+
                                     <li>
                                         <?php echo $this->Html->link(
                                             '<i class="icon-file"></i> Import from CSV',

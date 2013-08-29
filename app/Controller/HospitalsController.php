@@ -15,14 +15,25 @@ class HospitalsController extends AppController {
     public function beforeFilter() {
         parent::beforeFilter();
         $action = $this->request->params['action'];
+
         if($action == 'index') {
             $defaultFields = array('id', 'hospital_name', 'hospital_name_kana', 'insert_date', 'update_date');
         } else {
             $defaultFields = $this->HospitalDatum->defaultFields;
+
             foreach($defaultFields as $key => $value) {
                 $defaultFields[$key] = str_replace('HospitalDatum.', '', $defaultFields[$key]);
             }
         }
-        $this->set('defaultFields', $defaultFields);
+
+        $this->set(array(
+            'defaultFields' => $defaultFields
+        ));
+    }
+
+    public function beforeRender($options = null){
+        parent::beforeRender($options);
+
+        $this->set('title_for_layout', 'Hospital Management');
     }
 }

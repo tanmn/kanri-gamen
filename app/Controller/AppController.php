@@ -46,8 +46,26 @@ class AppController extends Controller {
     function beforeRender() {
         parent::beforeRender();
 
+        //rewrite flash message template
+        if ($this->Session->check('Message.flash')) {
+            $flash = $this->Session->read('Message.flash');
+
+            if ($flash['element'] == 'default') {
+                $flash['element'] = 'info';
+                $this->Session->write('Message.flash', $flash);
+            }
+        }
+
+        //rewrite error layout
         if ($this->name == 'CakeError') {
             $this->layout = 'default';
         }
+
+        //rewrite scaffold title
+        if($this->scaffold !== false){
+            $this->set('controller', $this);
+            $this->set('title_for_layout', $this->viewVars['singularHumanName'] . ' management');
+        }
     }
 }
+

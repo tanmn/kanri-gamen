@@ -14,6 +14,24 @@ body{
     line-height: 21px;
 }
 
+.table td[align=center],
+.table th{
+    text-align: center;
+}
+
+.table th a{
+    color: #444;
+    padding-right: 15px;
+}
+
+.table th a.asc{
+    background: url(../img/sort-asc.png) 100% 50% no-repeat;
+}
+
+.table th a.desc{
+    background: url(../img/sort-desc.png) 100% 50% no-repeat;
+}
+
 /*========== Debugger ==========*/
 #debugger{
     font-family: Consolas, 'Courier';
