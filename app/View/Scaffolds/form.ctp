@@ -6,7 +6,7 @@ $defaultFields = $this->viewVars['scaffoldFields'];
 // format timestamp to current
 foreach($data as $key => $value) {
     if(strpos($key, '_date') !== false) {
-        $this->request->data[$modelClass][$key] = date("Y/m/d H:i:s"). substr((string)microtime(), 1, 6);
+        $this->request->data[$modelClass][$key] = date(DATETIME_FORMAT);
     } elseif(strpos($key, '_checks') !== false) {
         if(empty($this->request->data[$modelClass][$key])) {
             $this->request->data[$modelClass][$key] = '{}';
@@ -80,6 +80,6 @@ foreach($data as $key => $value) {
 	<ul>
 
 		<li><?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $this->Form->value($modelClass.'.id')), null, __('Are you sure you want to delete # %s?', $this->Form->value($modelClass.'id'))); ?></li>
-		<li><?php echo $this->Html->link(__('List Recruiting Data'), array('action' => 'index')); ?></li>
+		<li><?php echo $this->Html->link(__('List Data'), array('action' => 'index')); ?></li>
 	</ul>
 </div>
