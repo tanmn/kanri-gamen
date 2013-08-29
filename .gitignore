@@ -1,6 +1,6 @@
-/app/Config
-/app/webroot/images/hospital
-/app/tmp
+#/app/Config
+#/app/webroot/images/hospital
+#/app/tmp
 /lib/Cake/Console/Templates/skel/tmp/
 /plugins
 /vendors
