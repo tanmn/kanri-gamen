@@ -106,6 +106,7 @@ class CommonComponent extends Component {
         foreach($optional as $k => $v){
             if(array_key_exists($k, $default)){
                 if($v == '\N') $v = NULL;
+
                 $default[$k] = $v;
             }
         }

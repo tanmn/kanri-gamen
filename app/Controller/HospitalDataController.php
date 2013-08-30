@@ -72,20 +72,20 @@ class HospitalDataController extends AppController
         $mask = array();
         foreach($this->HospitalDatum->defaultFields as $name){
             $name = str_replace('HospitalDatum.', '', $name);
-            $mask[$name] = null;
+            $mask[$name] = false;
         }
         */
 
         //define data mask
         $mask = array(
-            'id' => NULL,
-            'rw_id' => NULL,
-            'outline' => NULL,
-            'subject' => NULL,
-            'feature_1' => NULL,
-            'feature_t_1' => NULL,
-            'feature_2' => NULL,
-            'feature_t_2' => NULL
+            'id' => false,
+            'rw_id' => false,
+            'outline' => false,
+            'subject' => false,
+            'feature_1' => false,
+            'feature_t_1' => false,
+            'feature_2' => false,
+            'feature_t_2' => false
         );
 
         //prepare data
@@ -94,7 +94,13 @@ class HospitalDataController extends AppController
                 continue;
 
             $new_item = $this->Common->array_extend($mask, $item);
-            $data[] = array_filter($new_item);
+
+            //filter blank fields
+            foreach($new_item as $k => $item){
+                if($item === false) unset($new_item[$k]);
+            }
+
+            $data[] = $new_item;
         }
 
         //process

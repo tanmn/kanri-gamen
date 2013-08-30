@@ -83,20 +83,20 @@ class RecruitingDataController extends AppController
         $mask = array();
         foreach($this->RecruitingDatum->defaultFields as $name){
             $name = str_replace('RecruitingDatum.', '', $name);
-            $mask[$name] = null;
+            $mask[$name] = false;
         }
 
         //add extra mask columns
-        $mask['haizoku_recruiting'] = NULL;
-        $mask['recruiting_work_system'] = NULL;
-        $mask['recruiting_working_style_time1'] = NULL;
-        $mask['recruiting_working_style_time2'] = NULL;
-        $mask['recruiting_working_style_time3'] = NULL;
-        $mask['recruiting_working_style_time4'] = NULL;
-        $mask['recruiting_benefits1'] = NULL;
-        $mask['recruiting_benefits2'] = NULL;
-        $mask['recruiting_benefits3'] = NULL;
-        $mask['recruiting_benefits4'] = NULL;
+        $mask['haizoku_recruiting'] = false;
+        $mask['recruiting_work_system'] = false;
+        $mask['recruiting_working_style_time1'] = false;
+        $mask['recruiting_working_style_time2'] = false;
+        $mask['recruiting_working_style_time3'] = false;
+        $mask['recruiting_working_style_time4'] = false;
+        $mask['recruiting_benefits1'] = false;
+        $mask['recruiting_benefits2'] = false;
+        $mask['recruiting_benefits3'] = false;
+        $mask['recruiting_benefits4'] = false;
 
         //prepare data
         foreach ($array as $item) {
@@ -104,7 +104,13 @@ class RecruitingDataController extends AppController
                 continue;
 
             $new_item = $this->Common->array_extend($mask, $item);
-            $data[] = array_filter($new_item);
+
+            //filter blank fields
+            foreach($new_item as $k => $item){
+                if($item === false) unset($new_item[$k]);
+            }
+
+            $data[] = $new_item;
         }
 
         //process
