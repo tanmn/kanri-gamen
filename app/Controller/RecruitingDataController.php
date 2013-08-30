@@ -137,9 +137,9 @@ class RecruitingDataController extends AppController
      * @since 2013/08/29
      */
     function saveRecruitingData($item){
-        $this->RecruitingDatum->create();
-        $this->RecruitingDatum->id = ($lastID = $item['id']);
-        if(!$this->RecruitingDatum->save($item)) return false;
+        $lastID = $item['id'];
+        $updated = $this->RecruitingDatum->escapeValuesForUpdate($item);
+        if(!$this->RecruitingDatum->updateAll($updated, array('RecruitingDatum.id' => $lastID))) return false;
 
         $this->saveRecursiveData($item, $lastID);
 

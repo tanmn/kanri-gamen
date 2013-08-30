@@ -105,9 +105,10 @@ class HospitalDataController extends AppController
             $dbo->begin();
 
             foreach($data as $item){
-                $this->HospitalDatum->create();
-                $this->HospitalDatum->id = $item['id'];
-                if (!$this->HospitalDatum->save($item, array('validate' => false))) {
+                $id = $item['id'];
+                $updated = $this->HospitalDatum->escapeValuesForUpdate($item);
+
+                if (!$this->HospitalDatum->updateAll($updated, array('HospitalDatum.id' => $id))) {
                     $this->Session->setFlash(__('Update failed. Process was restored to last state.'), 'error');
                     $dbo->rollback();
                     break;

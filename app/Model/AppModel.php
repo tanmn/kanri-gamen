@@ -55,4 +55,27 @@ class AppModel extends Model {
 
         return true;
     }
+
+
+    /**
+     * Escape values for update only
+     *
+     * @author Mai Nhut Tan
+     * @since 2013/08/30
+     */
+     function escapeValuesForUpdate($fields = array()){
+         $dbo = $this->getDataSource();
+
+         $updates = array();
+
+         foreach ($fields as $field => $value) {
+             $type = $this->getColumnType($field);
+
+             if($type !== null){
+                 $updates[$field] = $dbo->value($value, $type);
+             }
+         }
+
+         return $updates;
+     }
 }
