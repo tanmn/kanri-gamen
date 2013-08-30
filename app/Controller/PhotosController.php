@@ -345,7 +345,7 @@ class PhotosController extends AppController {
      */
     function saveContent($content, $filepath){
         $dir = basename($filepath);
-        $file = new File($filepath, true, 0644);
+        $file = new File($filepath, true, 0777);
 
         if(!$file->write($content)){
             return false;

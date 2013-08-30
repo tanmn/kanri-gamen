@@ -138,8 +138,8 @@ class RecruitingDataController extends AppController
      */
     function saveRecruitingData($item){
         $this->RecruitingDatum->create();
+        $this->RecruitingDatum->id = ($lastID = $item['id']);
         if(!$this->RecruitingDatum->save($item)) return false;
-        $lastID = $this->RecruitingDatum->id;
 
         $this->saveRecursiveData($item, $lastID);
 

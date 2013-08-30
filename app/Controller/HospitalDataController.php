@@ -100,9 +100,21 @@ class HospitalDataController extends AppController
         //process
         if (empty($data)) {
             $this->Session->setFlash(__('Data is empty.'), 'info');
-        } else if (!$this->HospitalDatum->saveMany($data, array('validate' => false))) {
-            $this->Session->setFlash(__('Update failed. Process was restored to last state.'), 'error');
-        }else{
+        } else{
+            $dbo = $this->HospitalDatum->getDatasource();
+            $dbo->begin();
+
+            foreach($data as $item){
+                $this->HospitalDatum->create();
+                $this->HospitalDatum->id = $item['id'];
+                if (!$this->HospitalDatum->save($item, array('validate' => false))) {
+                    $this->Session->setFlash(__('Update failed. Process was restored to last state.'), 'error');
+                    $dbo->rollback();
+                    break;
+                }
+            }
+
+            $dbo->commit();
             $this->Session->setFlash(sprintf(__('%d row(s) updated successfully.'), count($data)), 'success');
         }
     }
