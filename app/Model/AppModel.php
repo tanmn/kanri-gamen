@@ -32,7 +32,8 @@ App::uses('Model', 'Model');
  */
 class AppModel extends Model {
 
-
+    //for array data type check
+    public $arrayFields = array();
 
 	/**
 	 * Update data info before saving
@@ -52,6 +53,9 @@ class AppModel extends Model {
         if (empty($data['update_date'])){
             $data['update_date'] = $update_time;
 		}
+
+        //handle array data type fields
+        $this->arrayTypeHandler($data);
 
         return true;
     }
@@ -77,5 +81,21 @@ class AppModel extends Model {
          }
 
          return $updates;
+     }
+
+     /**
+      * Add {} for array data type before saving
+      *
+      * @author Mai Nhut Tan
+      * @since 2013/09/04
+      * @param array $fields single object data
+      */
+     function arrayTypeHandler(&$fields = array()){
+         foreach($this->arrayFields as $fieldname){
+             if(!preg_match('/^\{.*\}$/', $fields[$fieldname])){
+                 //wrap around content with {}
+                 $fields[$fieldname] = '{'.$fields[$fieldname].'}';
+             }
+         }
      }
 }

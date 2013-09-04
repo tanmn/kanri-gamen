@@ -3,7 +3,14 @@
     <div class="widget stacked">
         <div class="widget-header">
             <h3>
-                <i class="icon-upload"></i> Import from CSV
+                <i class="icon-upload"></i>
+                <?php
+                    if(isset($title_for_upload)){
+                        echo $title_for_upload;
+                    }else{
+                        echo 'Import from CSV';
+                    }
+                ?>
             </h3>
         </div><!-- /widget-header -->
 
@@ -11,7 +18,12 @@
             <?php echo $this->Session->flash(); ?>
 
             <p>
-                Choose a CSV file to upload.
+                <?php
+                if(!empty($upload_description))
+                    echo $upload_description;
+                else
+                    echo 'Choose a CSV file to upload.';
+                ?>
             </p>
 
             <div class="fileupload fileupload-new" data-provides="fileupload">

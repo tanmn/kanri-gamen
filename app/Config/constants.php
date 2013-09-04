@@ -8,6 +8,11 @@
  * @since       2013-08-16
  */
 
+/**
+ * Debug mode will be set in Configure's debug variable
+ */
+define('DEBUG_MODE', 0);
+
 
 /**
  * Source path URL to fetch photos, no trailing dash
@@ -16,7 +21,7 @@ define('PHOTO_SOURCE_URL', 'http://kango-oshigoto.jp/img_la');
 
 
 /**
- *
+ * Default blank image will be used as place holder
  */
 define('DEFAULT_IMAGE', 'blank.gif');
 

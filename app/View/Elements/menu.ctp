@@ -88,6 +88,19 @@ $active_class = array(
                                             )
                                         ); ?>
                                     </li>
+                                    <li>
+                                        <?php echo $this->Html->link(
+                                            '<i class="icon-save"></i> Update from CSV',
+                                            array(
+                                                'controller' => 'HospitalData',
+                                                'action' => 'update'
+                                            ),
+                                            array(
+                                                'title' => 'Update from CSV',
+                                                'escape' => false
+                                            )
+                                        ); ?>
+                                    </li>
                                 </ul>
                             </li>
 

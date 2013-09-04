@@ -180,7 +180,3 @@ CakeLog::config('error', array(
 	'file' => 'error',
 ));
 
-/**
- * Include constants
- */
-require_once(APP . 'Config' . DS . 'constants.php');

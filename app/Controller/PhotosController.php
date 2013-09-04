@@ -131,6 +131,8 @@ class PhotosController extends AppController {
 
         $this->set(array(
             'title_for_layout' => 'Import photos from CSV',
+            'title_for_upload' => 'Import photos from CSV',
+            'upload_description' => '',
             'hash' => isset($hash) ? $hash : NULL
         ));
     }

@@ -142,7 +142,14 @@ class HospitalDatum extends AppModel {
         'HospitalDatum.feature_2',
         'HospitalDatum.feature_t_2'
     );
-    
+
+    //for array data type check
+    public $arrayFields = array(
+        'work_system_checks',
+        'holiday_checks'
+    );
+
+
     /**
      * Validation rules
      *

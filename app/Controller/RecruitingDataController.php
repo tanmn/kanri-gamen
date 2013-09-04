@@ -64,7 +64,9 @@ class RecruitingDataController extends AppController
         }
 
         $this->set(array(
-            'title_for_layout' => 'Import Hospital data from CSV'
+            'title_for_layout' => 'Import Recruiting data from CSV',
+            'title_for_upload' => 'Import Recruiting data',
+            'upload_description' => 'Choose a CSV file to upload. All data from CSV will be insert as new rows. All provided IDs will be ignored.'
         ));
     }
 
@@ -97,6 +99,9 @@ class RecruitingDataController extends AppController
         $mask['recruiting_benefits2'] = false;
         $mask['recruiting_benefits3'] = false;
         $mask['recruiting_benefits4'] = false;
+
+        //unset id for inserting only, updated on 2013/09/04
+        unset($mask['id']);
 
         //prepare data
         foreach ($array as $item) {
@@ -143,10 +148,10 @@ class RecruitingDataController extends AppController
      * @since 2013/08/29
      */
     function saveRecruitingData($item){
-        $lastID = $item['id'];
-        $updated = $this->RecruitingDatum->escapeValuesForUpdate($item);
-        if(!$this->RecruitingDatum->updateAll($updated, array('RecruitingDatum.id' => $lastID))) return false;
+        $this->RecruitingDatum->create();
+        if(!$this->RecruitingDatum->save($item)) return false;
 
+        $lastID = empty($this->RecruitingDatum->id) ? $this->RecruitingDatum->getLastInsertID() : $this->RecruitingDatum->id;
         $this->saveRecursiveData($item, $lastID);
 
         return $lastID;
