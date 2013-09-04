@@ -42,7 +42,7 @@ class AppModel extends Model {
     public function beforeSave($options = array()) {
         $key = $this->alias;
 		$data =& $this->data[$key];
-        $update_time = @DboSource::expression('NOW()');
+        $update_time = $this->getDatasource()->expression('NOW()');
 
 		if(empty($update_time)) $update_time = date('Y/m/d H:i:s');
 
@@ -50,9 +50,7 @@ class AppModel extends Model {
             $data['insert_date'] = $update_time;
         }
 
-        if (empty($data['update_date'])){
-            $data['update_date'] = $update_time;
-		}
+        $data['update_date'] = $update_time;
 
         //handle array data type fields
         $this->arrayTypeHandler($data);
@@ -79,6 +77,9 @@ class AppModel extends Model {
                  $updates[$field] = $dbo->value($value, $type);
              }
          }
+
+         //add update info
+         $updates['update_date'] = 'NOW()';
 
          return $updates;
      }
