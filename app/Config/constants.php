@@ -11,7 +11,7 @@
 /**
  * Debug mode will be set in Configure's debug variable
  */
-define('DEBUG_MODE', 0);
+define('DEBUG_MODE', 2);
 
 
 /**
@@ -42,7 +42,7 @@ define('SAVED_PHOTO_DIR', WWW_ROOT . 'images' . DS);
  * Path to store photo that will be fetched, followed by DS
  * This path will be saved to DB with filename
  */
-define('SAVED_PHOTO_PATH', 'hospital' . DS);
+define('SAVED_PHOTO_PATH', 'hospital_photo' . DS);
 
 
 /**

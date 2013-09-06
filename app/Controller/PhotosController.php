@@ -18,6 +18,7 @@ class PhotosController extends AppController {
     public $success = array();
     public $errors = array();
     public $queues = array();
+    private $hospital_id_shift = 23;
 
 
     /**
@@ -308,13 +309,13 @@ class PhotosController extends AppController {
         //check http code for success
         if($info['http_code'] == 200){
             //store content to disk
-            $filepath = SAVED_PHOTO_FULLPATH . $item['hospital_id'] . DS . $filename;
+            $filepath = SAVED_PHOTO_FULLPATH . ($item['hospital_id'] + $this->hospital_id_shift) . DS . $filename;
             $this->saveContent($content, $filepath);
         }
 
         //save to database
         $photo_id = $this->saveToDB(array(
-            'filename' => SAVED_PHOTO_PATH . $item['hospital_id'] . DS . $filename,
+            'filename' => SAVED_PHOTO_PATH . ($item['hospital_id'] + $this->hospital_id_shift) . DS . $filename,
             'target_id' => $item['hospital_id'],
             'target_flag' => DEFAULT_PHOTO_TARGET_FLAG
         ));

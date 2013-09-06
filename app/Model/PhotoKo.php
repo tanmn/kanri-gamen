@@ -11,7 +11,7 @@ class PhotoKo extends AppModel {
  *
  * @var mixed False or table name
  */
-	public $useTable = 'photo_ko';
+	public $useTable = 'hospital_photo_ko';
 
 /**
  * Display field

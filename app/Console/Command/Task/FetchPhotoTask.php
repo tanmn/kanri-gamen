@@ -16,6 +16,8 @@ class FetchPhotoTask extends AppShell {
 
     public $errors = array();
 
+    private $hospital_id_shift = 23;
+
     /**
      * Run initializing
      */
@@ -152,7 +154,7 @@ class FetchPhotoTask extends AppShell {
         //generate file path
         $fileext  = preg_replace('/^.+\./', '', $info['url']);
         $filename = $this->getName($item) . (empty($fileext) ? '' : '.' . $fileext);
-        $filepath = SAVED_PHOTO_FULLPATH . $item['PhotoKo']['target_id'] . DS . $filename;
+        $filepath = SAVED_PHOTO_FULLPATH . ($item['PhotoKo']['target_id']+$this->hospital_id_shift) . DS . $filename;
 
         //store content to disk
         if($this->saveContent($content, $filepath)){
@@ -161,7 +163,7 @@ class FetchPhotoTask extends AppShell {
             //save to database
             $this->saveToDB(array(
                 'id' => $item['PhotoKo']['id'],
-                'filename' => SAVED_PHOTO_PATH . $item['PhotoKo']['target_id'] . DS . $filename,
+                'filename' => SAVED_PHOTO_PATH . ($item['PhotoKo']['target_id']+$this->hospital_id_shift) . DS . $filename,
                 'target_id' => $item['PhotoKo']['target_id'],
                 'target_flag' => DEFAULT_PHOTO_TARGET_FLAG
             ));
@@ -183,7 +185,6 @@ class FetchPhotoTask extends AppShell {
         if(!$file->write($content)){
             return false;
         }
-
         return true;
     }
 

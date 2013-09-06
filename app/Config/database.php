@@ -78,7 +78,7 @@ class DATABASE_CONFIG {
         'port' => '5432',
         'login' => 'postgres',
         'password' => 'root',
-        'database' => 'kanrigamen',
+        'database' => 'nursewill_ko',
         'schema' => 'public',
         'prefix' => '',
         'encoding' => 'utf8'
