@@ -29,7 +29,7 @@ class HospitalPhoto extends AppModel {
      */
     public $belongsTo = array(
         'HospitalData' => array(
-            'className' => 'HospitalData',
+            'className' => 'HospitalDatum',
             'foreignKey' => 'hospital_data_id',
             'conditions' => '',
             'fields' => '',

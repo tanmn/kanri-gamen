@@ -12,8 +12,8 @@ App::uses('File', 'Utility');
  */
 class FetchPhotoTask extends AppShell {
 
-    public $uses = array('PhotoKo', 'Photo');
-
+    public $uses = array('PhotoKo', 'Photo', 'HospitalPhoto');
+    public $queues = array();
     public $errors = array();
 
     private $hospital_id_shift = 23;
@@ -97,6 +97,9 @@ class FetchPhotoTask extends AppShell {
         $this->out(sprintf("\n" . __d('cake_console', '%s request(s) initialized. Please wait until the task complete...'), count($this->Sender->requests)) . "\n");
         $this->Sender->execute();
 
+        //save Hospital Photo queues
+        $this->HospitalPhoto->saveMany($this->queues, array('validate' => false, 'atomic' => false));
+
         //destructor and output
         $total_time = microtime(true) - $start_time;
         $this->hr();
@@ -161,12 +164,20 @@ class FetchPhotoTask extends AppShell {
             $this->out(sprintf(__d('cake_console', 'File has been saved: %s.'), $filepath));
 
             //save to database
-            $this->saveToDB(array(
+            $photo_id = $this->saveToDB(array(
                 'id' => $item['PhotoKo']['id'],
                 'filename' => SAVED_PHOTO_PATH . ($item['PhotoKo']['target_id']+$this->hospital_id_shift) . DS . $filename,
                 'target_id' => $item['PhotoKo']['target_id'],
                 'target_flag' => DEFAULT_PHOTO_TARGET_FLAG
             ));
+
+            if($photo_id){
+                $this->queues[$item['PhotoKo']['target_id']] = array(
+                    'hospital_data_id' => $item['PhotoKo']['target_id'],
+                    'photo_id' => $photo_id,
+                    'disp_no' => 1
+                );
+            }
         }else{
             $this->out(sprintf(__d('cake_console', '<error>Error writing file: %s.</error>'), $filepath));
         }
@@ -193,7 +204,9 @@ class FetchPhotoTask extends AppShell {
      */
     function saveToDB($photoObject){
         $this->Photo->create();
-        return $this->Photo->save($photoObject);
+        if(!$this->Photo->save($photoObject)) return false;
+
+        return $this->Photo->getLastInsertID();
     }
 
     /**

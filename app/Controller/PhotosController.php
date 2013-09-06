@@ -49,6 +49,9 @@ class PhotosController extends AppController {
                         $file->delete();
                     }
 
+                    //delete hospital_photo
+                    $this->HospitalPhoto->deleteAll(array('HospitalPhoto.photo_id' => $data));
+
                     $this->Session->setFlash(sprintf(__('%d photo(s) deleted successfully.'), count($image_link)), 'success');
                 }else{
                     $this->Session->setFlash(__('Cannot delete photo(s).'), 'error');

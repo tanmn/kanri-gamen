@@ -8,21 +8,21 @@ App::uses('AppModel', 'Model');
  */
 class Photo extends AppModel
 {
-    
+
     /**
      * Use table
      *
      * @var mixed False or table name
      */
-    public $useTable = 'hospital_photo';
-    
+    public $useTable = 'photo';
+
     /**
      * Display field
      *
      * @var string
      */
     public $displayField = 'filename';
-    
+
     /**
      * Validation rules
      *
@@ -52,12 +52,12 @@ class Photo extends AppModel
         $this->validate = $validate1;
         return $this->validates();
     }
-    
+
     /**
      * check empty file
      *
      * @method checkEmpty
-     * @param 
+     * @param
      * @return null
      * @author Ngoc Thai
      * @since 2013-08-20
@@ -68,5 +68,5 @@ class Photo extends AppModel
             return true;
         return false;
     }
-    
+
 }
