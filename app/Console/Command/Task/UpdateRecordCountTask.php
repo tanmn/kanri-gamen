@@ -205,7 +205,7 @@ class UpdateRecordCountTask extends AppShell {
                     array(
                         'table' => 'hospital_data',
                         'alias' => 'HospitalDatum',
-                        'type'  => 'LEFT',
+                        'type'  => 'INNER',
                         'conditions' => array(
                             'RecruitingDatum.hospital_data_id = HospitalDatum.id'
                         )
@@ -255,7 +255,7 @@ class UpdateRecordCountTask extends AppShell {
                     array(
                         'table' => 'recruiting_data',
                         'alias' => 'RecruitingDatum',
-                        'type'  => 'LEFT',
+                        'type'  => 'INNER',
                         'conditions' => array(
                             'RecruitingDatum.hospital_data_id = HospitalDatum.id',
                             'RecruitingDatum.posting_flag' => 1,
