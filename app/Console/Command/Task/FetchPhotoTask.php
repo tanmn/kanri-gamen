@@ -90,6 +90,10 @@ class FetchPhotoTask extends AppShell {
             $this->Sender->add($request);
         }
 
+        //prepare inserting
+        $dbo = &$this->HospitalPhoto->getDatasource();
+        $dbo -> begin();
+
         //tracking time
         $start_time = microtime(true);
 
@@ -97,8 +101,19 @@ class FetchPhotoTask extends AppShell {
         $this->out(sprintf("\n" . __d('cake_console', '%s request(s) initialized. Please wait until the task complete...'), count($this->Sender->requests)) . "\n");
         $this->Sender->execute();
 
-        //save Hospital Photo queues
-        $this->HospitalPhoto->saveMany($this->queues, array('validate' => false, 'atomic' => false));
+        try{
+            //save Hospital Photo queues
+            $this->HospitalPhoto->saveMany($this->queues, array('validate' => false, 'atomic' => false));
+
+            //commit transaction
+            $dbo -> commit();
+        }catch(Exception $e){
+            $dbo -> rollback();
+            $this->hr();
+            $this->out(__d('cake_console', '<error>We got an error when saving data. Data will be rolled back. Please check the message then make a fix in your configurations.</error>'));
+            $this->out('<error>' . $e->getMessage() . '</error>');
+            exit();
+        }
 
         //destructor and output
         $total_time = microtime(true) - $start_time;
@@ -172,7 +187,7 @@ class FetchPhotoTask extends AppShell {
             ));
 
             if($photo_id){
-                $this->queues[$item['PhotoKo']['target_id']] = array(
+                $this->queues[/*$item['PhotoKo']['target_id']*/] = array(
                     'hospital_data_id' => $item['PhotoKo']['target_id'],
                     'photo_id' => $photo_id,
                     'disp_no' => 1

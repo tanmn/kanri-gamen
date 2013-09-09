@@ -328,7 +328,7 @@ class PhotosController extends AppController {
         }else{
             $this->success[] = $item;
 
-            $this->queues[$item['hospital_id']] = array(
+            $this->queues[/*$item['hospital_id']*/] = array(
                 'hospital_data_id' => $item['hospital_id'],
                 'photo_id' => $photo_id,
                 'disp_no' => $item['disp_no'],
